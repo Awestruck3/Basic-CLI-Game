@@ -34,8 +34,11 @@ class Enemy{
 
         //This will give us a name of the enemy which will determine the stats of the enemy going forward 
         std::string setEnemyName(int level = 0, int override = 0);
-        int Enemy::getCurHealth();
+        int getCurHealth();
+        std::string getName();
         bool gotKilled();
+        bool getIsDead();
+        void takeDamage(int damageToTake);
 
         void display();
 

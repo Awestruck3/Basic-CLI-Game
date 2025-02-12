@@ -27,6 +27,7 @@ void Enemy::setEnemy(std::string enemyName){
         m_damage = roll20()+1;
         m_health = roll20()+1;
     }
+    curHealth = m_health;
 }
 
 //This is just setting the enemy name. In the future I will add the level the player is at to generate harder enemies.
@@ -54,13 +55,25 @@ std::string Enemy::setEnemyName(int level, int override){
 }
 
 void Enemy::display(){
-    std::cout << m_name << " Health: " << m_health << " Damage: " << m_damage << " Defense " << m_defense << std::endl;
+    std::cout << m_name << ": Health: " << curHealth << " Damage: " << m_damage << " Defense " << m_defense << std::endl;
 }
 
 int Enemy::getCurHealth(){
     return curHealth;
 }
 
+std::string Enemy::getName(){
+    return m_name;
+}
+
 bool Enemy::gotKilled(){
     return isDead = true;
+}
+
+void Enemy::takeDamage(int damageToTake){
+    curHealth -= damageToTake;
+}
+
+bool Enemy::getIsDead(){
+    return isDead;
 }

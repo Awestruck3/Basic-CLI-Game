@@ -84,30 +84,66 @@ void goToIslandInstance(Islands selectedIslands, Player mc){
 //This is the combatInstance
 void combatInstance(Islands selectedIsland, Player mc){
     int numOfEnemies = roll5050()+1;
-    bool playerTurn = true;
+    bool isPlayerTurn = true;
     Enemy newEnemies[numOfEnemies];
 
-    for(int i = 0; i < numOfEnemies; i++){
-        newEnemies[i].display();
-    }
+    //How do I read a full array at once?
     while(mc.getCurHealth() > 0){
-        
+        for(int i = 0; i < numOfEnemies; i++){
+            if(newEnemies[i].getCurHealth() <= 0){
+                newEnemies[i].gotKilled();
+            }
+            if(newEnemies[i].getIsDead() == false){
+                newEnemies[i].display();
+            }
+        }
+        playerTurn(newEnemies, mc, numOfEnemies);
+        enemyTurn(newEnemies, mc, numOfEnemies);
     }
 }
 
-//Passing a reference to enemy here but I would need to pass an array...
-void playerTurn(Enemy& enemy, Player& mc, int numOfEnemies){
+void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     int playerAction;
     std::cout << "It is your turn. Would you like to:" << std::endl;
     std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
     std::cin >> playerAction;
-    while(playerAction <= 0 || playerAction > 3){
+    while(playerAction <= 0 || playerAction >= 4){
         std::cin.clear();
         std::cin.ignore(100, '\n');
         std::cout << "Invalid choice, please use numbers provided: ";
     }
-    if(numOfEnemies > 1){
-        std::cout << "Select target: ";
+    //This is if the player chooses attack
+    if(playerAction == 1){
+        if(numOfEnemies > 1){
+            std::cout << "Select target: " << std::endl;;
+            for(int i=0; i<numOfEnemies; i++){
+                if(enemy[i].getIsDead() == false){
+                    std::cout << i + 1 << ": "; 
+                    enemy[i].display();
+                }
+            }
+            //Now we select the target
+            std::cin >> playerAction;
+            
+            //Currently dead enemies have the same error message as an invalid option
+            while(playerAction <= 0 || playerAction > numOfEnemies + 1 || enemy[playerAction-1].getIsDead() == true){
+                std::cin.clear();
+                std::cin.ignore(100, '\n');
+                std::cout << "Invalid choice, please use numbers provided: ";
+                std::cin >> playerAction;
+            }
+            enemy[playerAction-1].takeDamage(mc.getStrength());
+            
+        }
     }
+}
 
+void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
+    //Enemys move in order and go from first to third
+    for(int i = 0; i < numOfEnemies; i++){
+        //If an enemy is dead they cannot move
+        if(enemy[i].getIsDead() == false){
+            std::cout << enemy[i].getName() << std::endl;
+        }
+    }
 }
