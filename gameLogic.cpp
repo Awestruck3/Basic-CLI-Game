@@ -86,9 +86,28 @@ void combatInstance(Islands selectedIsland, Player mc){
     int numOfEnemies = roll5050()+1;
     bool playerTurn = true;
     Enemy newEnemies[numOfEnemies];
+
     for(int i = 0; i < numOfEnemies; i++){
         newEnemies[i].display();
     }
+    while(mc.getCurHealth() > 0){
+        
+    }
+}
 
+//Passing a reference to enemy here but I would need to pass an array...
+void playerTurn(Enemy& enemy, Player& mc, int numOfEnemies){
+    int playerAction;
+    std::cout << "It is your turn. Would you like to:" << std::endl;
+    std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
+    std::cin >> playerAction;
+    while(playerAction <= 0 || playerAction > 3){
+        std::cin.clear();
+        std::cin.ignore(100, '\n');
+        std::cout << "Invalid choice, please use numbers provided: ";
+    }
+    if(numOfEnemies > 1){
+        std::cout << "Select target: ";
+    }
 
 }

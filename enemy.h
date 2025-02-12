@@ -14,6 +14,7 @@ class Enemy{
 
     //The curHealth will keep track of health while the battle commences, this should not be confused with m_health which represents max health
     int curHealth;
+    bool isDead;
 
     public:
 
@@ -23,7 +24,7 @@ class Enemy{
             m_damage = -1;
             m_health = -1;
             m_defense = -1;
-
+            isDead = false;
             //No level or override to the defaul constructor. This will be changed in future constructors
             m_name = setEnemyName();
             setEnemy(m_name);
@@ -33,6 +34,8 @@ class Enemy{
 
         //This will give us a name of the enemy which will determine the stats of the enemy going forward 
         std::string setEnemyName(int level = 0, int override = 0);
+        int Enemy::getCurHealth();
+        bool gotKilled();
 
         void display();
 

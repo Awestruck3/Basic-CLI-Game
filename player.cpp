@@ -28,6 +28,9 @@ void Player::setLuck(int randoLuck){
 int Player::getLuck(){
     return luck;
 }
+int Player::getCurHealth(){
+    return curHealth;
+}
 
 //This will take in random numbers and assign them to the player's stats
 void Player::setPlayerStats(int forHealth, int forStrength, int forLuck){

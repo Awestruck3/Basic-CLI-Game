@@ -12,3 +12,4 @@ void startGame();
 int selectIsland(int maxIslandNum);
 void goToIslandInstance(Islands selectedIslands, Player mc);
 void combatInstance(Islands selectedIsland, Player mc);
+void playerTurn(Enemy& enemy, Player& mc, int numOfEnemies);

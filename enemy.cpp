@@ -56,3 +56,11 @@ std::string Enemy::setEnemyName(int level, int override){
 void Enemy::display(){
     std::cout << m_name << " Health: " << m_health << " Damage: " << m_damage << " Defense " << m_defense << std::endl;
 }
+
+int Enemy::getCurHealth(){
+    return curHealth;
+}
+
+bool Enemy::gotKilled(){
+    return isDead = true;
+}

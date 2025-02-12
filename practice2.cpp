@@ -11,7 +11,7 @@ using namespace std;
 #define SEED 45678
 
 int main(){
-    srand(SEED);
+    srand(time(NULL));
     startGame();
-    
+    return 0;
 }
