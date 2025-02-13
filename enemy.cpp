@@ -2,6 +2,7 @@
 
 void Enemy::setEnemy(std::string enemyName){
     m_name = enemyName;
+    m_isDefending = false; //I put isDefending up here because I may make certain enemies begin defending depending on how I feel
     if(enemyName == "Snake"){
         m_defense = roll4();
         m_damage = roll10()%5 + 1;
@@ -71,9 +72,46 @@ bool Enemy::gotKilled(){
 }
 
 void Enemy::takeDamage(int damageToTake){
-    curHealth -= damageToTake;
+    if(m_isDefending == true && damageToTake - m_defense > 0){
+        curHealth -= damageToTake - m_defense;
+    }
+    else if(m_isDefending == true && damageToTake - m_defense >= 0){
+        curHealth = curHealth;
+    }
+    else{
+        curHealth -= damageToTake;
+    }
 }
 
 bool Enemy::getIsDead(){
     return isDead;
+}
+
+int Enemy::attack(){
+    return m_damage;
+}
+
+bool Enemy::defenseStatus(){
+    return m_isDefending;
+}
+
+bool Enemy::curDefending(){
+    return m_isDefending = true;
+}
+
+bool Enemy::noLongerDefending(){
+    return m_isDefending = false;
+}
+
+int Enemy::getDefense(){
+    return m_defense;
+}
+
+int Enemy::actionChoice(){
+    if(curHealth > m_health/2){
+        return roll4() + 1;
+    }
+    else{
+        return roll5050() + 1;
+    }
 }

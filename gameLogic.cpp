@@ -89,6 +89,7 @@ void combatInstance(Islands selectedIsland, Player mc){
 
     //How do I read a full array at once?
     while(mc.getCurHealth() > 0){
+        mc.display();
         for(int i = 0; i < numOfEnemies; i++){
             if(newEnemies[i].getCurHealth() <= 0){
                 newEnemies[i].gotKilled();
@@ -98,6 +99,9 @@ void combatInstance(Islands selectedIsland, Player mc){
             }
         }
         playerTurn(newEnemies, mc, numOfEnemies);
+        for(int i = 0; i < numOfEnemies; i++){
+            newEnemies[i].noLongerDefending();
+        }
         enemyTurn(newEnemies, mc, numOfEnemies);
     }
 }
@@ -134,6 +138,7 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies){
             }
             enemy[playerAction-1].takeDamage(mc.getStrength());
             
+            
         }
     }
 }
@@ -143,7 +148,15 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     for(int i = 0; i < numOfEnemies; i++){
         //If an enemy is dead they cannot move
         if(enemy[i].getIsDead() == false){
-            std::cout << enemy[i].getName() << std::endl;
+            if(enemy[i].actionChoice() > 1){
+                int damageTaken = mc.takeDamage(enemy[i].attack());
+                std::cout << enemy[i].getName() << " attacks! " << mc.getName() << " takes " << damageTaken << " damage!" << std::endl;
+            }
+            //Okay so here defending takes an additional turn to apply. This must be fixed
+            else{
+                enemy[i].curDefending();
+                std::cout << enemy[i].getName() << " is defending!" << std::endl;
+            }
         }
     }
 }

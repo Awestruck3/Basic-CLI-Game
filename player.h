@@ -32,6 +32,7 @@
             int getLuck();
             void setPlayerStats(int forHealth, int forStrength, int forLuck);
             int getCurHealth();
+            void display();
 
             int takeDamage(int damageToTake);
     };

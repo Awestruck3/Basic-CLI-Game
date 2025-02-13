@@ -40,5 +40,12 @@ void Player::setPlayerStats(int forHealth, int forStrength, int forLuck){
 }
 
 int Player::takeDamage(int damageToTake){
+    if(damageToTake - strength > 0){
+        curHealth -= damageToTake - strength;
+    }
     return damageToTake - strength;
+}
+
+void Player::display(){
+    std::cout << name << " Health " << curHealth << "/" << health << " Strength: " << strength << std::endl; 
 }

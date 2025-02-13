@@ -15,6 +15,7 @@ class Enemy{
     //The curHealth will keep track of health while the battle commences, this should not be confused with m_health which represents max health
     int curHealth;
     bool isDead;
+    bool m_isDefending;
 
     public:
 
@@ -24,6 +25,7 @@ class Enemy{
             m_damage = -1;
             m_health = -1;
             m_defense = -1;
+            m_isDefending = false;
             isDead = false;
             //No level or override to the defaul constructor. This will be changed in future constructors
             m_name = setEnemyName();
@@ -39,6 +41,12 @@ class Enemy{
         bool gotKilled();
         bool getIsDead();
         void takeDamage(int damageToTake);
+        int attack();
+        bool curDefending();
+        bool noLongerDefending();
+        int actionChoice();
+        int getDefense();
+        bool defenseStatus();
 
         void display();
 
