@@ -106,8 +106,11 @@ void combatInstance(Islands selectedIsland, Player mc){
     }
 }
 
+//Due to my own foolishness, in the following function the enemy selected by the player will always be enemy[playerAction-1]
 void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     int playerAction;
+
+    mc.setIsDefending(false);
     std::cout << "It is your turn. Would you like to:" << std::endl;
     std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
     std::cin >> playerAction;
@@ -118,39 +121,31 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     }
     //This is if the player chooses attack
     if(playerAction == 1){
-        if(numOfEnemies > 1){
-            std::cout << "Select target: " << std::endl;;
-            for(int i=0; i<numOfEnemies; i++){
-                if(enemy[i].getIsDead() == false){
-                    std::cout << i + 1 << ": "; 
-                    enemy[i].display();
-                }
-            }
-            //Now we select the target
-            std::cin >> playerAction;
-            
-            //Currently dead enemies have the same error message as an invalid option
-            while(playerAction <= 0 || playerAction > numOfEnemies + 1 || enemy[playerAction-1].getIsDead() == true){
-                std::cin.clear();
-                std::cin.ignore(100, '\n');
-                std::cout << "Invalid choice, please use numbers provided: ";
-                std::cin >> playerAction;
-            }
-            enemy[playerAction-1].takeDamage(mc.getStrength());
-            
-            
-        }
+        playerAttackLogic(numOfEnemies, enemy, mc);
+    }
+    if(playerAction == 2){
+        //defense logic will go here
+        mc.setIsDefending(true);
     }
 }
 
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
+    int playerDefense = mc.getStrength();
     //Enemys move in order and go from first to third
     for(int i = 0; i < numOfEnemies; i++){
         //If an enemy is dead they cannot move
         if(enemy[i].getIsDead() == false){
             if(enemy[i].actionChoice() > 1){
-                int damageTaken = mc.takeDamage(enemy[i].attack());
-                std::cout << enemy[i].getName() << " attacks! " << mc.getName() << " takes " << damageTaken << " damage!" << std::endl;
+                int damageTaken;
+                if(mc.getIsDefending() == true && playerDefense > 0){
+                    damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense);
+                    playerDefense -= enemy[i].attack();
+                }
+                else{
+                    damageTaken = mc.takeDamage(enemy[i].attack(), 0);
+                }
+
+                std::cout << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << std::endl << mc.getName() << " takes " << damageTaken << " damage!" << std::endl;
             }
             //Okay so here defending takes an additional turn to apply. This must be fixed
             else{
@@ -158,5 +153,30 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
                 std::cout << enemy[i].getName() << " is defending!" << std::endl;
             }
         }
+    }
+}
+
+void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
+    int playerAction;
+    if(numOfEnemies > 1){
+        std::cout << "Select target: " << std::endl;;
+        for(int i=0; i<numOfEnemies; i++){
+            if(enemy[i].getIsDead() == false){
+                std::cout << i + 1 << ": "; 
+                enemy[i].display();
+            }
+        }
+        //Now we select the target
+        std::cin >> playerAction;
+        
+        //Currently dead enemies have the same error message as an invalid option
+        while(playerAction <= 0 || playerAction > numOfEnemies + 1 || enemy[playerAction-1].getIsDead() == true){
+            std::cin.clear();
+            std::cin.ignore(100, '\n');
+            std::cout << "Invalid choice, please use numbers provided: ";
+            std::cin >> playerAction;
+        }
+        std::cout << enemy[playerAction-1].getName() << " takes " << enemy[playerAction-1].takeDamage(mc.getStrength()) << " damage!" << std::endl;
+        
     }
 }

@@ -6,22 +6,19 @@
         int health;
         int strength;
         int luck;
-        bool ailment[5];
-        bool boone[5];
         int money;
         int curHealth;
+        bool ailment[5];
+        bool boone[5];
+        bool isDefending;
 
         public:
-            Player(int forHealth, int forStrength, int forLuck){
-                health = 0;
-                strength = 0;
-                luck = 0;
-                setPlayerStats(forHealth, forStrength, forLuck);
-                curHealth = health;
-            }
+            //Constructor
+            Player(int forHealth, int forStrength, int forLuck);
             
 
         
+            //Basic Setters and getters
             void setName();
             char* getName();
             void setHealth(int randoHealth);
@@ -33,6 +30,10 @@
             void setPlayerStats(int forHealth, int forStrength, int forLuck);
             int getCurHealth();
             void display();
+            
 
-            int takeDamage(int damageToTake);
+            //Combat methods
+            void setIsDefending(bool updatedStatus);
+            int takeDamage(int damageToTake, int playerDefense);
+            bool getIsDefending();
     };

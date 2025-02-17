@@ -56,7 +56,7 @@ std::string Enemy::setEnemyName(int level, int override){
 }
 
 void Enemy::display(){
-    std::cout << m_name << ": Health: " << curHealth << " Damage: " << m_damage << " Defense " << m_defense << std::endl;
+    std::cout << m_name << ": Health: " << curHealth << "/" << m_health << " Damage: " << m_damage << " Defense " << m_defense << std::endl;
 }
 
 int Enemy::getCurHealth(){
@@ -71,16 +71,20 @@ bool Enemy::gotKilled(){
     return isDead = true;
 }
 
-void Enemy::takeDamage(int damageToTake){
+int Enemy::takeDamage(int damageToTake){
+    int rc = 0; //The return value exists only for the display back in the gameLogic
     if(m_isDefending == true && damageToTake - m_defense > 0){
+        rc = damageToTake - m_defense;
         curHealth -= damageToTake - m_defense;
     }
     else if(m_isDefending == true && damageToTake - m_defense >= 0){
         curHealth = curHealth;
     }
     else{
+        rc = damageToTake;
         curHealth -= damageToTake;
     }
+    return rc;
 }
 
 bool Enemy::getIsDead(){

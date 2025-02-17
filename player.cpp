@@ -1,6 +1,14 @@
 #include "player.h"
 
 
+Player::Player(int forHealth, int forStrength, int forLuck){
+    health = 0;
+    strength = 0;
+    luck = 0;
+    setPlayerStats(forHealth, forStrength, forLuck);
+    curHealth = health;
+}
+
 void Player::setName(){
     char* input;
     std::cout << "Enter your name: ";
@@ -32,6 +40,14 @@ int Player::getCurHealth(){
     return curHealth;
 }
 
+bool Player::getIsDefending(){
+    return isDefending;
+}
+
+void Player::setIsDefending(bool updatedStatus){
+    isDefending = updatedStatus;
+}
+
 //This will take in random numbers and assign them to the player's stats
 void Player::setPlayerStats(int forHealth, int forStrength, int forLuck){
     setHealth(forHealth);
@@ -39,11 +55,17 @@ void Player::setPlayerStats(int forHealth, int forStrength, int forLuck){
     setLuck(forLuck);
 }
 
-int Player::takeDamage(int damageToTake){
-    if(damageToTake - strength > 0){
-        curHealth -= damageToTake - strength;
+int Player::takeDamage(int damageToTake, int playerDefense){
+    if(isDefending == true && damageToTake - playerDefense > 0){
+        curHealth -= damageToTake - playerDefense;
     }
-    return damageToTake - strength;
+    else if(isDefending == true && damageToTake - playerDefense <= 0){
+        curHealth = curHealth;
+    }
+    else{
+        curHealth -= damageToTake;
+    }
+    return damageToTake - playerDefense;
 }
 
 void Player::display(){

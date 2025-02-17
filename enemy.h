@@ -40,7 +40,7 @@ class Enemy{
         std::string getName();
         bool gotKilled();
         bool getIsDead();
-        void takeDamage(int damageToTake);
+        int takeDamage(int damageToTake);
         int attack();
         bool curDefending();
         bool noLongerDefending();
