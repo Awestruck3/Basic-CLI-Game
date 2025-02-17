@@ -71,3 +71,16 @@ int Player::takeDamage(int damageToTake, int playerDefense){
 void Player::display(){
     std::cout << name << " Health " << curHealth << "/" << health << " Strength: " << strength << std::endl; 
 }
+
+bool Player::fleeAttempt(){
+    bool success = false;
+    std::cout << name << " attempts to escape!" << std::endl << "." << std::endl << "." << std::endl << "." << std::endl;
+    if(roll20() < 5){
+        std::cout << name << "'s escape was successful!" << std::endl;
+        success = true;
+    }
+    else{
+        std::cout << name << "'s escape was not successful!" << std::endl;
+    }
+    return success;
+}

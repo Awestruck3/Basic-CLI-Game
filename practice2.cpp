@@ -14,6 +14,9 @@ using namespace std;
 
 int main(){
     srand(SEED2);
+    //while(){
+    //    
+    //}
     startGame();
     return 0;
 }

@@ -22,26 +22,30 @@ void startGame(){
     Player mc(roll20(), roll20(), roll10());
     mc.setName();
 
-    int numUpcomingIslands = generateAmountOfIslands();
-    std::cout << numUpcomingIslands << " Island(s) coming up." << std::endl;
-    Islands* upcomingIslands = new Islands[numUpcomingIslands];
-    
-    //This for loop sets the attributes of all the islands then displays them for the player to see.
-    //It also assigns numeric value to each island for the player to select
-    for(int i=0; i<numUpcomingIslands; i++){
-        upcomingIslands[i].setIslands();
-        std::cout << "Island #" << i+1 << std::endl;
-        upcomingIslands[i].display();
-        std::cout << std::endl;
+    while(gameEnd == false){
+        std::cout << "\033[1;36m" << "gameEnd value is " << gameEnd << "\033[1;0m" << std::endl;
+        int numUpcomingIslands = generateAmountOfIslands();
+        std::cout << numUpcomingIslands << " Island(s) coming up." << std::endl;
+        Islands* upcomingIslands = new Islands[numUpcomingIslands];
+        
+        //This for loop sets the attributes of all the islands then displays them for the player to see.
+        //It also assigns numeric value to each island for the player to select
+        for(int i=0; i<numUpcomingIslands; i++){
+            upcomingIslands[i].setIslands();
+            std::cout << "Island #" << i+1 << std::endl;
+            upcomingIslands[i].display();
+            std::cout << std::endl;
+        }
+
+        //Here we get the int value of the island the player wants to explore
+        chosenIsland = selectIsland(numUpcomingIslands);
+
+        //I have to subtract one to the chosenIsland because the player is going to select one above the internal number they want
+        goToIslandInstance(upcomingIslands[chosenIsland-1], mc, &gameEnd);
+
+        delete [] upcomingIslands;
     }
-
-    //Here we get the int value of the island the player wants to explore
-    chosenIsland = selectIsland(numUpcomingIslands);
-
-    //I have to subtract one to the chosenIsland because the player is going to select one above the internal number they want
-    goToIslandInstance(upcomingIslands[chosenIsland-1], mc);
-
-    delete [] upcomingIslands;
+    std::cout << "\033[1;36m" << "Game Over! " << gameEnd << "\033[1;0m" << std::endl;
 }
 
 int selectIsland(int maxIslandNum){
@@ -59,10 +63,10 @@ int selectIsland(int maxIslandNum){
 
 
 //Here is a function that exists to bridge the selected island to the correct type of instance
-void goToIslandInstance(Islands selectedIslands, Player mc){
+void goToIslandInstance(Islands selectedIslands, Player mc, bool* gameEnd){
     if(selectedIslands.getIslandType() == "Combat"){
         //This will go to the combat instance
-        combatInstance(selectedIslands, mc);
+        combatInstance(selectedIslands, mc, gameEnd);
     }
     else if(selectedIslands.getIslandType() == "Shop"){
         //This goes to shop instance
@@ -82,36 +86,50 @@ void goToIslandInstance(Islands selectedIslands, Player mc){
 }
 
 //This is the combatInstance
-void combatInstance(Islands selectedIsland, Player mc){
+void combatInstance(Islands selectedIsland, Player mc, bool* gameEnd){
     int numOfEnemies = roll5050()+1;
     bool isPlayerTurn = true;
+    bool escape = false;
     Enemy newEnemies[numOfEnemies];
 
     //How do I read a full array at once?
-    while(mc.getCurHealth() > 0){
-        mc.display();
+    while(escape == false && mc.getCurHealth() > 0){
+        int numOfDeadEnemies = checkNumOfDeadEnemies(newEnemies, numOfEnemies);
+        std::cout <<  "\033[1;32m"; mc.display(); std::cout << "\033[1;0m";
         for(int i = 0; i < numOfEnemies; i++){
-            if(newEnemies[i].getCurHealth() <= 0){
-                newEnemies[i].gotKilled();
-            }
             if(newEnemies[i].getIsDead() == false){
-                newEnemies[i].display();
+               std::cout <<  "\033[1;31m"; newEnemies[i].display(); std::cout << "\033[1;0m";
             }
         }
-        playerTurn(newEnemies, mc, numOfEnemies);
+        
+        if(numOfDeadEnemies == numOfEnemies){
+            break;
+        }
+        playerTurn(newEnemies, mc, numOfEnemies, &escape);
+        if(escape == true){
+            break;
+        }
         for(int i = 0; i < numOfEnemies; i++){
             newEnemies[i].noLongerDefending();
         }
+        //Without this check the game will allow a dead enemy to attack despite being dead
+        checkNumOfDeadEnemies(newEnemies, numOfEnemies);
+        
         enemyTurn(newEnemies, mc, numOfEnemies);
+    }
+    if(mc.getCurHealth() < 0){
+        *gameEnd = true;
     }
 }
 
+
 //Due to my own foolishness, in the following function the enemy selected by the player will always be enemy[playerAction-1]
-void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies){
+void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     int playerAction;
+    bool escapeAttempt = false;
 
     mc.setIsDefending(false);
-    std::cout << "It is your turn. Would you like to:" << std::endl;
+    std::cout << "\033[1;32m" << "It is your turn. Would you like to:" << "\033[1;0m" << std::endl;
     std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
     std::cin >> playerAction;
     while(playerAction <= 0 || playerAction >= 4){
@@ -126,6 +144,10 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     if(playerAction == 2){
         //defense logic will go here
         mc.setIsDefending(true);
+    }
+    if(playerAction == 3){
+        //TEMPORARY: FLEE LOGIC IN HERE. THIS IS SUBJECT TO CHANGE
+        *escape = mc.fleeAttempt();
     }
 }
 
@@ -145,12 +167,12 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
                     damageTaken = mc.takeDamage(enemy[i].attack(), 0);
                 }
 
-                std::cout << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << std::endl << mc.getName() << " takes " << damageTaken << " damage!" << std::endl;
+                std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
             }
             //Okay so here defending takes an additional turn to apply. This must be fixed
             else{
                 enemy[i].curDefending();
-                std::cout << enemy[i].getName() << " is defending!" << std::endl;
+                std::cout << "\033[1;41m" << enemy[i].getName() << " is defending!" << "\033[0m" << std::endl;
             }
         }
     }
@@ -159,7 +181,7 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
 void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
     int playerAction;
     if(numOfEnemies > 1){
-        std::cout << "Select target: " << std::endl;;
+        std::cout << "\033[1;32m" << "Select target: " << "\033[1;0m" << std::endl;;
         for(int i=0; i<numOfEnemies; i++){
             if(enemy[i].getIsDead() == false){
                 std::cout << i + 1 << ": "; 
@@ -176,7 +198,18 @@ void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
             std::cout << "Invalid choice, please use numbers provided: ";
             std::cin >> playerAction;
         }
-        std::cout << enemy[playerAction-1].getName() << " takes " << enemy[playerAction-1].takeDamage(mc.getStrength()) << " damage!" << std::endl;
+        std::cout << "\033[1;34m" << enemy[playerAction-1].getName() << " takes " << enemy[playerAction-1].takeDamage(mc.getStrength()) << " damage!" << "\033[1;0m" << std::endl;
         
     }
+}
+
+int checkNumOfDeadEnemies(Enemy* enemy, int numOfEnemies){
+    int numOfDeadEnemies = 0;
+    for(int i = 0; i < numOfEnemies; i++){
+        if(enemy[i].getCurHealth() <= 0){
+            enemy[i].gotKilled();
+            numOfDeadEnemies++;
+        }
+    }
+    return numOfDeadEnemies;
 }

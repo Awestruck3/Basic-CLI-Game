@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <cstring>
+#include "dice.h"
+
     class Player{
         char name[100];
         int health;
@@ -16,8 +18,6 @@
             //Constructor
             Player(int forHealth, int forStrength, int forLuck);
             
-
-        
             //Basic Setters and getters
             void setName();
             char* getName();
@@ -36,4 +36,5 @@
             void setIsDefending(bool updatedStatus);
             int takeDamage(int damageToTake, int playerDefense);
             bool getIsDefending();
+            bool fleeAttempt();
     };
