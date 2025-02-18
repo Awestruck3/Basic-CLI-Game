@@ -1,3 +1,6 @@
+#include "player.h"
+#include "enemy.h"
+#include "islands.h"
 //randomly generate number of islands to land on
 //Return the number of islands
 int generateAmountOfIslands();

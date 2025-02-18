@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 
 //Let's start by making an enemy class
 class Enemy{
