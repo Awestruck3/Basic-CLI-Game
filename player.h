@@ -1,7 +1,4 @@
 #pragma once
-#include <iostream>
-#include <cstring>
-#include "dice.h"
 
     class Player{
         char name[100];

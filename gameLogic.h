@@ -1,11 +1,3 @@
-#include <iostream>
-#include <stdlib.h>
-#include "dice.h"
-#include "islands.h"
-#include "player.h"
-#include "enemy.h"
-
-
 //randomly generate number of islands to land on
 //Return the number of islands
 int generateAmountOfIslands();

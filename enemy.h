@@ -1,7 +1,5 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include "dice.h"
+
 
 //Let's start by making an enemy class
 class Enemy{

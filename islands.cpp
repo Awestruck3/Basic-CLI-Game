@@ -1,6 +1,7 @@
 #include "islands.h"
 #include "dice.h"
-
+#include <iostream>
+#include <string>
 
 Islands& Islands::setIslands(){
         typeOfIsland = roll4();

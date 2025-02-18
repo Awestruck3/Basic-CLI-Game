@@ -1,5 +1,7 @@
 #include "player.h"
-
+#include <iostream>
+#include <cstring>
+#include "dice.h"
 
 Player::Player(int forHealth, int forStrength, int forLuck){
     health = 0;

@@ -1,4 +1,10 @@
 #include "gameLogic.h"
+#include <iostream>
+#include <stdlib.h>
+#include "dice.h"
+#include "islands.h"
+#include "player.h"
+#include "enemy.h"
 
 int generateAmountOfIslands(){
     int rc = 0;

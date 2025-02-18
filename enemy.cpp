@@ -1,5 +1,7 @@
 #include "enemy.h"
-
+#include <iostream>
+#include <string>
+#include "dice.h"
 
 Enemy::Enemy(int level, int override){
     m_name = "Nothing";
