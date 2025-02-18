@@ -62,7 +62,7 @@ int selectIsland(int maxIslandNum, Player& mc){
         else{
             std::cin.clear();
             std::cin.ignore(100, '\n');
-            std::cout << "Invalid choice, please use numbers provided: ";
+            std::cout << "\033[1;31m" << "Invalid choice, please use numbers provided: " << "\033[1;0m";
             std::cin >> userChoice;
         }
     }
@@ -78,6 +78,7 @@ void goToIslandInstance(Islands selectedIslands, Player& mc, bool* gameEnd){
     }
     else if(selectedIslands.getIslandType() == "Shop"){
         //This goes to shop instance
+        shopInstance(selectedIslands, mc, gameEnd);
     }
     else if(selectedIslands.getIslandType() == "Hard Enemy"){
         //This goes to Hard Enemy instance
@@ -238,5 +239,18 @@ int checkNumOfDeadEnemies(Enemy* enemy, int numOfEnemies){
 }
 
 void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
+    //As of right now the shop can be used to heal 5 hp, increase max hp by 3, increase strength by 1.
+    int userChoice;
+    mc.display();
+    std::cout << "\033[1;35m" << "A shopkeeper looks at you." << std::endl << "\033[1;31m" << "1. Heal 5 HP (15 money)" << std::endl << "\033[1;32m" << "2. Increase Max HP by 3 (25 money)" << std::endl << "\033[1;36m" << "3. Increase Strenght by 1 (30 money)" << std::endl << "4. Skip" << std::endl << "\033[1;33m" << "\"Choose...\" " << std::endl;
+    std::cin >> userChoice;
+    while(userChoice <= 0 || userChoice > 4){
+        std::cin.clear();
+        std::cin.ignore(100, '\n');
+        std::cout << "\033[1;31m" << "Invalid choice, please use numbers 1-3: " << "\033[1;0m";
+        std::cin >> userChoice;
+    }
 
+        mc.buy(userChoice);
 }
+

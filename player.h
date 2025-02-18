@@ -38,4 +38,10 @@
             bool getIsDefending();
             bool fleeAttempt();
             void gatherLoot(int lootValue);
+
+            //Shop methods
+            void heal(int hpToHeal);
+            void increaseMaxHealth(int healthToIncreaseBy);
+            void increaseStrength(int strengthToIncreaseBy);
+            bool buy(int choice);
     };

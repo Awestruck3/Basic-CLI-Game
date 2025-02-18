@@ -89,3 +89,32 @@ bool Player::fleeAttempt(){
 void Player::gatherLoot(int lootValue){
     money += lootValue;
 }
+
+void Player::heal(int hpToHeal){
+    curHealth += hpToHeal;
+    if(curHealth > health){
+        curHealth = health;
+    }
+}
+
+void Player::increaseMaxHealth(int healthToIncreaseBy){
+    health += healthToIncreaseBy;
+}
+
+void Player::increaseStrength(int strengthToIncreaseBy){
+    strength += strengthToIncreaseBy;
+}
+
+bool Player::buy(int choice){
+    bool successfulBuy = false;
+    if(choice == 1 && money > 15){
+        heal(5);
+    }
+    else if(choice == 2 && money > 25){
+        increaseMaxHealth(3);
+    }
+    else if(choice == 3 && money > 30){
+        increaseStrength(1);
+    }
+    //I need a thing for not enough money here
+}
