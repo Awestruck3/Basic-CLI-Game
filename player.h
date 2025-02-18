@@ -37,4 +37,5 @@
             int takeDamage(int damageToTake, int playerDefense);
             bool getIsDefending();
             bool fleeAttempt();
+            void gatherLoot(int lootValue);
     };

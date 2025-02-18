@@ -5,6 +5,7 @@ Player::Player(int forHealth, int forStrength, int forLuck){
     health = 0;
     strength = 0;
     luck = 0;
+    money = 0;
     setPlayerStats(forHealth, forStrength, forLuck);
     curHealth = health;
 }
@@ -69,7 +70,7 @@ int Player::takeDamage(int damageToTake, int playerDefense){
 }
 
 void Player::display(){
-    std::cout << name << " Health " << curHealth << "/" << health << " Strength: " << strength << std::endl; 
+    std::cout << name << " Health " << curHealth << "/" << health << " Strength: " << strength << " Money " << money << std::endl; 
 }
 
 bool Player::fleeAttempt(){
@@ -83,4 +84,8 @@ bool Player::fleeAttempt(){
         std::cout << name << "'s escape was not successful!" << std::endl;
     }
     return success;
+}
+
+void Player::gatherLoot(int lootValue){
+    money += lootValue;
 }

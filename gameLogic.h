@@ -11,10 +11,11 @@
 int generateAmountOfIslands();
 
 void startGame();
-int selectIsland(int maxIslandNum);
-void goToIslandInstance(Islands selectedIslands, Player mc, bool *gameEnd);
-void combatInstance(Islands selectedIsland, Player mc, bool *gameEnd);
+int selectIsland(int maxIslandNum, Player &mc);
+void goToIslandInstance(Islands selectedIslands, Player& mc, bool *gameEnd);
+void combatInstance(Islands selectedIsland, Player& mc, bool *gameEnd);
 void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape);
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies);
 void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc);
+void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd);
 int checkNumOfDeadEnemies(Enemy* enemy, int numOfEnemies);

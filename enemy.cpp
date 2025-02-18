@@ -1,8 +1,27 @@
 #include "enemy.h"
 
+
+Enemy::Enemy(){
+    m_name = "Nothing";
+    m_damage = -1;
+    m_health = -1;
+    m_defense = -1;
+    m_isDefending = false;
+    isDead = false;
+    //No level or override to the defaul constructor. This will be changed in future constructors
+    m_name = setEnemyName();
+    setEnemy(m_name);
+}
+
 void Enemy::setEnemy(std::string enemyName){
     m_name = enemyName;
     m_isDefending = false; //I put isDefending up here because I may make certain enemies begin defending depending on how I feel
+    moneyToDrop = 0;
+    willDrop = roll5050();
+    if(willDrop == true){
+        moneyToDrop = roll20() + 1;
+        moneyToDrop += roll20();
+    }
     if(enemyName == "Snake"){
         m_defense = roll4();
         m_damage = roll10()%5 + 1;
@@ -118,4 +137,8 @@ int Enemy::actionChoice(){
     else{
         return roll5050() + 1;
     }
+}
+
+int Enemy::getDropMoney(){
+    return moneyToDrop;
 }

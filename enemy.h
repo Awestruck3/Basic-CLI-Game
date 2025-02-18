@@ -17,20 +17,15 @@ class Enemy{
     bool isDead;
     bool m_isDefending;
 
+
+    //These will track loot. As of right now we only have money as a reward 
+    bool willDrop;
+    int moneyToDrop;
+
     public:
 
         //We're going to create a no argument constructor
-        Enemy(){
-            m_name = "Nothing";
-            m_damage = -1;
-            m_health = -1;
-            m_defense = -1;
-            m_isDefending = false;
-            isDead = false;
-            //No level or override to the defaul constructor. This will be changed in future constructors
-            m_name = setEnemyName();
-            setEnemy(m_name);
-        }
+        Enemy();
         //We're going to create an enemy generator here
         void setEnemy(std::string enemyName);
 
@@ -47,6 +42,7 @@ class Enemy{
         int actionChoice();
         int getDefense();
         bool defenseStatus();
+        int getDropMoney();
 
         void display();
 

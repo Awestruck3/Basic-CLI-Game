@@ -13,7 +13,7 @@ using namespace std;
 #define SEED2 123456
 
 int main(){
-    srand(SEED2);
+    srand(SEED);
     //while(){
     //    
     //}
