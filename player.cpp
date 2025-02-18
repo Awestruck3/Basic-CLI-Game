@@ -6,6 +6,7 @@ Player::Player(int forHealth, int forStrength, int forLuck){
     strength = 0;
     luck = 0;
     money = 0;
+    level = 0;
     setPlayerStats(forHealth, forStrength, forLuck);
     curHealth = health;
 }
@@ -109,12 +110,30 @@ bool Player::buy(int choice){
     bool successfulBuy = false;
     if(choice == 1 && money > 15){
         heal(5);
+        successfulBuy = true;
+        money -= 15;
     }
     else if(choice == 2 && money > 25){
         increaseMaxHealth(3);
+        successfulBuy = true;
+        money -= 15;
     }
     else if(choice == 3 && money > 30){
         increaseStrength(1);
+        successfulBuy = true;
+        money -= 30;
     }
     //I need a thing for not enough money here
+    else if(choice == 4){
+        successfulBuy = true;
+    }
+    else{
+        std::cout << "\033[1;33m" << "Not enough money" << "\033[1;0m" << std::endl;
+    }
+    
+    return successfulBuy;
+}
+
+int Player::getLevel(){
+    return level;
 }

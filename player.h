@@ -10,6 +10,7 @@
         int luck;
         int money;
         int curHealth;
+        int level;
         bool ailment[5];
         bool boone[5];
         bool isDefending;
@@ -30,6 +31,7 @@
             void setPlayerStats(int forHealth, int forStrength, int forLuck);
             int getCurHealth();
             void display();
+            int getLevel();
             
 
             //Combat methods

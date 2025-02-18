@@ -25,7 +25,7 @@ class Enemy{
     public:
 
         //We're going to create a no argument constructor
-        Enemy();
+        Enemy(int level = 0, int override = 0);
         //We're going to create an enemy generator here
         void setEnemy(std::string enemyName);
 

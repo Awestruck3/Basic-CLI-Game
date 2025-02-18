@@ -1,7 +1,7 @@
 #include "enemy.h"
 
 
-Enemy::Enemy(){
+Enemy::Enemy(int level, int override){
     m_name = "Nothing";
     m_damage = -1;
     m_health = -1;
@@ -9,9 +9,10 @@ Enemy::Enemy(){
     m_isDefending = false;
     isDead = false;
     //No level or override to the defaul constructor. This will be changed in future constructors
-    m_name = setEnemyName();
+    m_name = setEnemyName(level, override);
     setEnemy(m_name);
 }
+
 
 void Enemy::setEnemy(std::string enemyName){
     m_name = enemyName;
@@ -39,8 +40,14 @@ void Enemy::setEnemy(std::string enemyName){
     }
     else if(enemyName == "Tiger"){
         m_defense = roll4();
-        m_damage = roll20()%10 + 4;
+        m_damage = roll10()%10 + 4;
         m_health = 8 + roll6();
+    }
+    else if(enemyName == "Lion"){
+        m_defense = roll5050()+5;
+        m_damage = roll20() + 3;
+        m_health = 50;
+        moneyToDrop = 30;
     }
     else{
         m_defense = roll20()+1;
@@ -56,7 +63,11 @@ void Enemy::setEnemy(std::string enemyName){
 std::string Enemy::setEnemyName(int level, int override){
     std::string rc;
     int enemyNum = roll6();
-    if(enemyNum == 0 || enemyNum == 1){
+    //Override will be for boos and hardEnemies
+    if(override == 1){
+        return rc = "Lion";
+    }
+    else if(enemyNum == 0 || enemyNum == 1){
         return rc = "Snake";
     }
     else if(enemyNum == 2 || enemyNum == 3){

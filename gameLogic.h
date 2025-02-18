@@ -13,7 +13,7 @@ int generateAmountOfIslands();
 void startGame();
 int selectIsland(int maxIslandNum, Player &mc);
 void goToIslandInstance(Islands selectedIslands, Player& mc, bool *gameEnd);
-void combatInstance(Islands selectedIsland, Player& mc, bool *gameEnd);
+void combatInstance(Islands selectedIsland, Player& mc, bool *gameEnd, int level = 0, int override = 0);
 void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape);
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies);
 void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc);

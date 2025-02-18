@@ -74,20 +74,27 @@ int selectIsland(int maxIslandNum, Player& mc){
 void goToIslandInstance(Islands selectedIslands, Player& mc, bool* gameEnd){
     if(selectedIslands.getIslandType() == "Combat"){
         //This will go to the combat instance
-        combatInstance(selectedIslands, mc, gameEnd);
+        combatInstance(selectedIslands, mc, gameEnd, mc.getLevel());
     }
     else if(selectedIslands.getIslandType() == "Shop"){
         //This goes to shop instance
         shopInstance(selectedIslands, mc, gameEnd);
     }
     else if(selectedIslands.getIslandType() == "Hard Enemy"){
+        //In hardEnemy instances we need to send in an override to guarantee output
+        int override = 0;
+        if(mc.getLevel() == 0){
+            override = 1;
+        }
         //This goes to Hard Enemy instance
+        combatInstance(selectedIslands, mc, gameEnd, mc.getLevel(), override);
     }
     else if(selectedIslands.getIslandType() == "Item Room"){
         //This goes to Item Room instance
     }
     else if(selectedIslands.getIslandType() == "Boss"){
         //This goes to Boss instance
+        //I guess Boss instance can be an override combat like the hardEnemies
     }
     else{
         //This goes to special what instance (nothing as of now)
@@ -96,40 +103,67 @@ void goToIslandInstance(Islands selectedIslands, Player& mc, bool* gameEnd){
 
 //This is the combatInstance
 //Curhealth is not staying saved
-void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
-    int numOfEnemies = roll5050()+1;
-    int lootMoney = 0;
-    bool isPlayerTurn = true;
+void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level, int override){
     bool escape = false;
-    Enemy newEnemies[numOfEnemies];
+    bool isPlayerTurn = true;
+    int lootMoney = 0;
 
-    for(int i = 0; i < numOfEnemies; i++){
-        lootMoney += newEnemies[i].getDropMoney();
-    }
+    if(override == 0){
+        int numOfEnemies = roll5050()+1;    
+        Enemy newEnemies[numOfEnemies];
 
-    while(escape == false && mc.getCurHealth() > 0){
-        int numOfDeadEnemies = checkNumOfDeadEnemies(newEnemies, numOfEnemies);
-        std::cout <<  "\033[1;32m"; mc.display(); std::cout << "\033[1;0m";
         for(int i = 0; i < numOfEnemies; i++){
-            if(newEnemies[i].getIsDead() == false){
-               std::cout <<  "\033[1;31m"; newEnemies[i].display(); std::cout << "\033[1;0m";
+            lootMoney += newEnemies[i].getDropMoney();
+        }
+
+        while(escape == false && mc.getCurHealth() > 0){
+            int numOfDeadEnemies = checkNumOfDeadEnemies(newEnemies, numOfEnemies);
+            std::cout <<  "\033[1;32m"; mc.display(); std::cout << "\033[1;0m";
+            for(int i = 0; i < numOfEnemies; i++){
+                if(newEnemies[i].getIsDead() == false){
+                   std::cout <<  "\033[1;31m"; newEnemies[i].display(); std::cout << "\033[1;0m";
+                }
             }
+
+            if(numOfDeadEnemies == numOfEnemies){
+                break;
+            }
+            playerTurn(newEnemies, mc, numOfEnemies, &escape);
+            if(escape == true){
+                break;
+            }
+            for(int i = 0; i < numOfEnemies; i++){
+                newEnemies[i].noLongerDefending();
+            }
+            //Without this check the game will allow a dead enemy to attack despite being dead
+            checkNumOfDeadEnemies(newEnemies, numOfEnemies);
+
+            enemyTurn(newEnemies, mc, numOfEnemies);
         }
+    }
+    //This else is the hardEnemy fight conbat logic
+    else{
+        Enemy hardEnemy(mc.getLevel(), override);
+        lootMoney = hardEnemy.getDropMoney();
+        while(escape == false && mc.getCurHealth() > 0 && hardEnemy.getIsDead() == false){
+            //Because the hard enemy is only one enemy, we have to use slightly custom logic to check if it's dead
+            if(hardEnemy.getCurHealth() <= 0){
+                break;
+            }
+            std::cout << "\033[1;31m"; hardEnemy.display(); std::cout << "\033[1;0m";
         
-        if(numOfDeadEnemies == numOfEnemies){
-            break;
+            playerTurn(&hardEnemy, mc, 1, &escape);
+            if(escape == true){
+                break;
+            }
+            hardEnemy.noLongerDefending();
+
+            if(hardEnemy.getCurHealth() <= 0){
+                break;
+            }
+
+            enemyTurn(&hardEnemy, mc, 1);
         }
-        playerTurn(newEnemies, mc, numOfEnemies, &escape);
-        if(escape == true){
-            break;
-        }
-        for(int i = 0; i < numOfEnemies; i++){
-            newEnemies[i].noLongerDefending();
-        }
-        //Without this check the game will allow a dead enemy to attack despite being dead
-        checkNumOfDeadEnemies(newEnemies, numOfEnemies);
-        
-        enemyTurn(newEnemies, mc, numOfEnemies);
     }
 
     if(escape == false){
@@ -251,6 +285,9 @@ void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
         std::cin >> userChoice;
     }
 
-        mc.buy(userChoice);
+        while(mc.buy(userChoice) == false){
+        std::cin.clear();
+        std::cin.ignore(100, '\n');
+        std::cin >> userChoice;
+        }
 }
-
