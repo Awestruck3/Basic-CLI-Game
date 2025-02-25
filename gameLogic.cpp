@@ -94,6 +94,8 @@ void goToIslandInstance(Islands selectedIslands, Player& mc, bool* gameEnd){
     }
     else if(selectedIslands.getIslandType() == "Item Room"){
         //This goes to Item Room instance
+        //I guess I need to create items
+        itemInstance(selectedIslands, mc, gameEnd);
     }
     else if(selectedIslands.getIslandType() == "Boss"){
         //This goes to Boss instance
@@ -293,4 +295,11 @@ void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
         std::cin.ignore(100, '\n');
         std::cin >> userChoice;
         }
+}
+
+void itemInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
+    Item choices[3];
+    for(int i = 0; i < 3; i++){
+        choices[i].generateItem();
+    }
 }

@@ -1,25 +1,26 @@
 #include "player.h"
 #include <iostream>
-#include <cstring>
 #include "dice.h"
 
 Player::Player(int forHealth, int forStrength, int forLuck){
+    name = "";
     health = 0;
     strength = 0;
     luck = 0;
     money = 0;
     level = 0;
+    itemCurIndex = 0; //This is going to be used for checking all items in inventory and adding new items to the array
     setPlayerStats(forHealth, forStrength, forLuck);
     curHealth = health;
 }
 
 void Player::setName(){
-    char* input;
+    std::string input;
     std::cout << "Enter your name: ";
     std::cin >> input;
-    strcpy(name, input);
+    name = input;
 }
-char* Player::getName(){
+std::string Player::getName(){
     return name;
 }
 void Player::setHealth(int randoHealth){

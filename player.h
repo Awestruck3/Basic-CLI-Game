@@ -1,16 +1,20 @@
 #pragma once
+#include "items.h"
+#include <string>
 
     class Player{
-        char name[100];
+        std::string name;
         int health;
         int strength;
         int luck;
         int money;
         int curHealth;
         int level;
+        int itemCurIndex;
         bool ailment[5];
         bool boone[5];
         bool isDefending;
+        Item itemArr[100];
 
         public:
             //Constructor
@@ -18,7 +22,7 @@
             
             //Basic Setters and getters
             void setName();
-            char* getName();
+            std::string getName();
             void setHealth(int randoHealth);
             int getHealth();
             void setStrength(int randoStrength);

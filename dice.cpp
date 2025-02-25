@@ -1,4 +1,6 @@
 #include "dice.h"
+#include <random>
+
 
 //REMINDER FOR USING DICE
 //ALL DICE WILL BE 0-ONE BELOW INTENDED TOP DIGIT. EG. ON D6 IT ROLLS 0-5
@@ -25,4 +27,28 @@ int roll10(){
 
 int roll20(){
     return rand()%20;
+}
+
+int roll100(){
+    return rand()%100;
+}
+
+int rollForRarity(){
+    //Good spot to start learning random distribution
+    int fullRoll = roll100()+1;
+    if(fullRoll <= 90){
+        return 1;
+    }
+    else if(fullRoll > 90 && fullRoll <= 95){
+        return 2;
+    }
+    else if(fullRoll > 95 && fullRoll <=98){
+        return 3;
+    }
+    else if(fullRoll > 98){
+        return 4;
+    }
+    else{
+     return 0;
+    }
 }

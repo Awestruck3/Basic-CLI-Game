@@ -13,4 +13,5 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape);
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies);
 void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc);
 void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd);
+void itemInstance(Islands selectedIsland, Player& mc, bool* gameEnd);
 int checkNumOfDeadEnemies(Enemy* enemy, int numOfEnemies);
