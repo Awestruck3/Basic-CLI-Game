@@ -1,5 +1,6 @@
 #include <string>
 
+
 class Item{
     int id;
     int rarity;
@@ -27,5 +28,4 @@ class Item{
         bool getPostItem();
         bool getActiveItem();
         bool getOutsideItem();
-        //void activatePreItems(bool setState);
 };

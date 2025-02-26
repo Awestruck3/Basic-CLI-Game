@@ -44,7 +44,7 @@
 
             //Combat methods
             void setIsDefending(bool updatedStatus);
-            int takeDamage(int damageToTake, int playerDefense);
+            int takeDamage(int damageToTake, int playerDefense, int passiveDefence);
             bool getIsDefending();
             bool fleeAttempt();
             void gatherLoot(int lootValue);
@@ -65,11 +65,12 @@
             //3 = active
             //4 = outside
             //Maybe this will work?
-            void checkItems(Enemy* allEnemies);
+            void checkItems(Enemy* allEnemies, int curPhase);
             bool getTeddy();
             void setTeddy(bool newState);
-            int getBonusDef();
+            int getBonusDef() const;
             int getBonusAttack();
+            void bookOfMagic();
 
             
     };

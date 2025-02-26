@@ -35,13 +35,13 @@ void Item::setIDAndName(int rarity){
             case 1:
                 //Strength +2
                 id = 1;
-                name = "Sword";
+                name = "Sword"; //TODO Test
                 preItem = true;
                 break;
             case 2:
                 //When defending strength increases by 4
                 id = 2;
-                name = "Shield";
+                name = "Shield"; //Works
                 preItem = true;
                 break;
             case 3:
@@ -49,48 +49,48 @@ void Item::setIDAndName(int rarity){
                 //Randomly increases 2 stats by 1 level (this can be the same stat twice)
                 name = "Book of Magic";
                 //This will be an outside item
-                outsideItem = true;
+                outsideItem = true; //TODO WIP
                 break;
             case 4:
                 id = 4;
                 //Can be used three times to reroll islands
                 name = "Flute";
-                outsideItem = true;
+                outsideItem = true; //TODO WIP
                 break;
             case 5:
                 id = 5;
                 //Lower enemy strength by 3
-                name = "Scary Mask";
+                name = "Scary Mask"; //TODO: Test
                 preItem = true;
                 break;
             case 6:
                 id = 6;
                 //First attack per fight is defended against
-                name = "Teddy Bear";
+                name = "Teddy Bear"; //Working
                 preItem = true;
                 break;
             case 7:
                 id = 7;
                 //Give chance to enemy to miss attack
-                name = "Pepper spray";
+                name = "Pepper spray"; //TODO WIP
                 preItem = true;
                 break;
             case 8:
                 id = 8;
                 //Enemies take one damage at the end of every turn
-                name = "Matches";
+                name = "Matches"; //TODO WIP
                 postItem = true;
                 break;
             case 9:
                 id = 9;
                 //Tigers and lions take +2 every attack
-                name = "Whistle";
+                name = "Whistle"; //TODO WIP
                 preItem = true;
                 break;
             case 10:
                 id = 10;
                 //Chance to heal 1hp between islands 
-                name = "Fishing Rod";
+                name = "Fishing Rod"; //TODO WIP
                 outsideItem = true;
                 break;
             default:
@@ -109,25 +109,25 @@ void Item::setIDAndName(int rarity){
             case 1:
                 id = 21;
                 //All dice rolls in combat occur twice, giving player the better option
-                name = "Dice";
-                activeItem = true;
+                name = "Dice"; //TODO WIP
+                activeItem = true; 
                 break;
             case 2:
                 id = 22;
                 //Heals 3 hp between islands, up to 5 if you have fishing rod
-                name = "Cookbook";
+                name = "Cookbook"; //TODO WIP
                 outsideItem = true;
                 break;
             case 3:
                 id = 23;
                 //Defend +5 
-                name = "Armour";
+                name = "Armour"; //TODO Test
                 preItem = true;
                 break;
             case 4:
                 id = 24;
                 //Thorns, 2 damage to enemy when attacked
-                name = "Fire Potion";
+                name = "Fire Potion"; //TODO WIP
                 preItem = true;
                 break;
             default:
@@ -146,13 +146,13 @@ void Item::setIDAndName(int rarity){
             case 1:
                 id = 31;
                 //Player attacks twice per turn
-                name = "Claws";
+                name = "Claws"; //TODO WIP
                 preItem = true;
                 break;
             case 2:
                 id = 32;
                 //Randomly activates an item twice
-                name = "Question Mark";
+                name = "Question Mark"; //TODO WIP
                 preItem = true;
                 postItem = true;
                 activeItem = true;
@@ -160,15 +160,15 @@ void Item::setIDAndName(int rarity){
                 break;
             case 3:
                 id = 33;
-                //Ten damage
-                name = "Barrier";
+                //Ten damage defence
+                name = "Barrier"; //TODO Test
                 preItem = true;
                 break;
             case 4:
                 id = 34;
                 //Incerase luck by 10 (Also I should include luck elements maybe)
                 name = "Clover";
-                outsideItem = true;
+                outsideItem = true; //TODO WIP
                 break;
             default:
                 id = 666;
@@ -186,13 +186,13 @@ void Item::setIDAndName(int rarity){
             case 1:
                 id = 41;
                 //Increase strength by 1 point per island
-                name = "Barbell";
+                name = "Barbell"; //TODO WIP
                 outsideItem = true;
                 break;
             case 2:
                 id = 42;
                 //Shoots for 50 damage. Once per turn
-                name = "Gun";
+                name = "Gun"; //TODO Test
                 preItem = true;
                 break;
             default:
@@ -243,7 +243,3 @@ bool Item::getActiveItem(){
 bool Item::getOutsideItem(){
     return outsideItem;
 }
-
-//void Item::activatePreItems(bool setState){
-//    curActive = setState;
-//}

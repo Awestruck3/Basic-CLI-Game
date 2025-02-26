@@ -97,6 +97,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
     bool escape = false;
     bool isPlayerTurn = true;
     int lootMoney = 0;
+    mc.setTeddy(false); //It should be fine to always set the teddy to false in every combat because it won't work unless the TB is in the inventory
 
     if(override == 0){
         int numOfEnemies = roll5050()+1;    
@@ -172,7 +173,7 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     bool escapeAttempt = false;
     mc.turnReset();
     //This should confirm all active items
-    mc.checkItems(enemy);
+    mc.checkItems(enemy, 0);
     
     
     std::cout << "\033[1;32m" << "It is your turn. Would you like to:" << "\033[1;0m" << std::endl;
@@ -201,11 +202,11 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
             if(enemy[i].actionChoice() > 1){
                 int damageTaken;
                 if(mc.getIsDefending() == true && playerDefense > 0){
-                    damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense + playerPassiveDef);
+                    damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense, playerPassiveDef);
                     playerDefense -= enemy[i].attack();
                 }
                 else{
-                    damageTaken = mc.takeDamage(enemy[i].attack(), playerPassiveDef);
+                    damageTaken = mc.takeDamage(enemy[i].attack(), 0, playerPassiveDef);
                 }
                 if(damageTaken > 0){
                     std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
@@ -213,6 +214,8 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
                 else{
                     std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << 0 << " damage!" << "\033[0m" << std::endl;
                 }
+                //std::cout << "\033[1;36m" << mc.getBonusDef() << "\033[1;0m"; //This prints passive damage for debug reasons. Might need in the future
+                mc.setTeddy(true); //As of right now this will make the teddy a one time use item. Need to make a post-battle function
             }
             //Okay so here defending takes an additional turn to apply. This must be fixed
             else{
@@ -224,7 +227,7 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
 }
 
 void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
-    int playerAction;
+    int playerAction; 
     if(numOfEnemies > 1){
         std::cout << "\033[1;32m" << "Select target: " << "\033[1;0m" << std::endl;;
         for(int i=0; i<numOfEnemies; i++){
@@ -287,29 +290,38 @@ void itemInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
     }
     std::cout << "Select and item to take or use 4 to skip: ";
     userChoice = selectionFunction(mc, 0, 4);
-    mc.attainItem(choices, userChoice);
+    if(choices[userChoice-1].getId() == 3){
+        mc.bookOfMagic();
+    }
+    else{
+        mc.attainItem(choices, userChoice);
+    }
 }
 
 //With how often I use this logic for choice making I figured this was easiest
 int selectionFunction(Player mc, int low, int high){
     int userChoice = 0;
     std::cin >> userChoice;
-    if(userChoice == 0){
-        mc.display();
-        std::cin.clear();
-        std::cin.ignore(100, '\n');
-        std::cin >> userChoice;
-    }
-    else if(userChoice == 21){
-        mc.showInventory();
-        std::cin.clear();
-        std::cin.ignore(100, '\n');
-        std::cin >> userChoice;
-    }
     while(userChoice <= low || userChoice > high){
-        std::cin.clear();
-        std::cin.ignore(100, '\n');
-        std::cout << "\033[1;31m" << "Invalid choice, please use numbers " << low+1 << "-" << high << ": " << "\033[1;0m";
+        if(userChoice == 0){
+            mc.display();
+            std::cin.clear();
+            std::cin.ignore(100, '\n');
+            std::cout << "\033[1;33m" << "Make selection: " << "\033[1;0m";
+            //std::cin >> userChoice;
+        }
+        else if(userChoice == 21){
+            mc.showInventory();
+            std::cin.clear();
+            std::cin.ignore(100, '\n');
+            //std::cin >> userChoice;
+        }
+        else{
+            std::cin.clear();
+            std::cin.ignore(100, '\n');
+            std::cout << "\033[1;31m" << "Invalid choice, please use numbers " << low+1 << "-" << high << ": " << "\033[1;0m";
+            //std::cin >> userChoice;
+        }
         std::cin >> userChoice;
     }
     return userChoice;

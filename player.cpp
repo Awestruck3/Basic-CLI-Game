@@ -64,17 +64,22 @@ void Player::setPlayerStats(int forHealth, int forStrength, int forLuck){
     setLuck(forLuck);
 }
 
-int Player::takeDamage(int damageToTake, int playerDefense){
-    if(isDefending == true && damageToTake - playerDefense > 0){
-        curHealth -= damageToTake - playerDefense;
+int Player::takeDamage(int damageToTake, int playerDefence, int passiveDefence){
+    int fulldefence = playerDefence + passiveDefence;
+
+    if(isDefending == true && damageToTake - fulldefence > 0){
+        curHealth -= damageToTake - playerDefence;
     }
-    else if(isDefending == true && damageToTake - playerDefense <= 0){
+    else if(isDefending == true && damageToTake - fulldefence <= 0){
         curHealth = curHealth;
     }
-    else{
-        curHealth -= damageToTake;
+    else if(isDefending == false && damageToTake > passiveDefence){
+        curHealth -= damageToTake - passiveDefence;
     }
-    return damageToTake - playerDefense;
+    else{
+        damageToTake = 0;
+    }
+    return damageToTake - fulldefence;
 }
 
 void Player::display(){
@@ -164,14 +169,17 @@ void Player::showInventory(){
 }
 
 //This checks the inventory for items and activates them if necessary
-
-void Player::checkItems(Enemy* allEnemies){
+// 0 = pre
+// 1 = post
+// 2 = active
+// 3 = outside
+void Player::checkItems(Enemy* allEnemies, int curPhase){
     int i = 0;
     //We skip this whole function if there's nothing in the inventory
     while(itemArr[i].getId() != 0){
         //I should probably pass this into an Item function that activates items
         //PreItems
-        if(itemArr[i].getPreItem() == true){
+        if(itemArr[i].getPreItem() == true && curPhase == 0){
             if(itemArr[i].getId() == 1){
                 bonusAttack += 2;   
             }
@@ -180,6 +188,7 @@ void Player::checkItems(Enemy* allEnemies){
             }
             if(itemArr[i].getId() == 5){
                 bonusAttack += 3; //I know this technically lowers enemy defense but a little bit of flavour text will make it do that 
+                bonusDef += 3;
             }
             if(itemArr[i].getId() == 6 && teddy == false){
                 bonusDef += 1000; //This one's gonna be a bit tricky because I only want it to activate once per turn
@@ -213,7 +222,7 @@ void Player::checkItems(Enemy* allEnemies){
         }
 
         //PostItems
-        else if(itemArr[i].getPostItem() == true){
+        else if(itemArr[i].getPostItem() == true && curPhase == 1){
             if(itemArr[i].getId() == 8){
                 //I have no idea if this will work lmao
                 allEnemies->takeDamage(3);
@@ -222,7 +231,7 @@ void Player::checkItems(Enemy* allEnemies){
         }
 
         //ActiveItems
-        else if(itemArr[i].getActiveItem() == true){
+        else if(itemArr[i].getActiveItem() == true && curPhase == 2){
             if(itemArr[i].getId() == 21){
                 //Ugh, logic for reroll goes here. I'll figure that out when I get to it
             }
@@ -230,9 +239,9 @@ void Player::checkItems(Enemy* allEnemies){
         }
 
         //OutsideItems
-        else if(itemArr[i].getOutsideItem() == true){
+        else if(itemArr[i].getOutsideItem() == true && curPhase == 3){
             if(itemArr[i].getId() == 3){
-                //Increase random stats once
+                bookOfMagic();
             }
             if(itemArr[i].getId() == 10){
                 if(roll10() < 3){
@@ -279,6 +288,19 @@ int Player::getBonusAttack(){
     return bonusAttack;
 }
 
-int Player::getBonusDef(){
+int Player::getBonusDef() const{
     return bonusDef;
+}
+
+void Player::bookOfMagic(){
+    int selectedStat = roll100()%3;
+    if(selectedStat == 0){
+        health++;
+    }
+    else if(selectedStat == 1){
+        strength++;
+    }
+    else if(selectedStat == 2){
+        luck++;
+    }
 }
