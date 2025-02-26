@@ -11,7 +11,7 @@ Item::Item(){
     postItem = false;
     activeItem = false;
     outsideItem = false;
-
+    //curActive = false;
 }
 
 Item::~Item(){
@@ -36,55 +36,70 @@ void Item::setIDAndName(int rarity){
                 //Strength +2
                 id = 1;
                 name = "Sword";
+                preItem = true;
                 break;
             case 2:
                 //When defending strength increases by 4
                 id = 2;
                 name = "Shield";
+                preItem = true;
                 break;
             case 3:
                 id = 3;
                 //Randomly increases 2 stats by 1 level (this can be the same stat twice)
                 name = "Book of Magic";
+                //This will be an outside item
+                outsideItem = true;
                 break;
             case 4:
                 id = 4;
                 //Can be used three times to reroll islands
                 name = "Flute";
+                outsideItem = true;
                 break;
             case 5:
                 id = 5;
                 //Lower enemy strength by 3
                 name = "Scary Mask";
+                preItem = true;
                 break;
             case 6:
                 id = 6;
                 //First attack per fight is defended against
                 name = "Teddy Bear";
+                preItem = true;
                 break;
             case 7:
                 id = 7;
                 //Give chance to enemy to miss attack
                 name = "Pepper spray";
+                preItem = true;
                 break;
             case 8:
                 id = 8;
                 //Enemies take one damage at the end of every turn
                 name = "Matches";
+                postItem = true;
                 break;
             case 9:
                 id = 9;
                 //Tigers and lions take +2 every attack
                 name = "Whistle";
+                preItem = true;
                 break;
             case 10:
                 id = 10;
                 //Chance to heal 1hp between islands 
                 name = "Fishing Rod";
+                outsideItem = true;
                 break;
             default:
                 id = 666;
                 name = "What";
+                preItem = true;
+                postItem = true;
+                activeItem = true;
+                outsideItem = true;
                 break;
         }
     }
@@ -95,25 +110,33 @@ void Item::setIDAndName(int rarity){
                 id = 21;
                 //All dice rolls in combat occur twice, giving player the better option
                 name = "Dice";
+                activeItem = true;
                 break;
             case 2:
                 id = 22;
                 //Heals 3 hp between islands, up to 5 if you have fishing rod
                 name = "Cookbook";
+                outsideItem = true;
                 break;
             case 3:
                 id = 23;
                 //Defend +5 
                 name = "Armour";
+                preItem = true;
                 break;
             case 4:
                 id = 24;
                 //Thorns, 2 damage to enemy when attacked
                 name = "Fire Potion";
+                preItem = true;
                 break;
             default:
                 id = 666;
                 name = "What";
+                preItem = true;
+                postItem = true;
+                activeItem = true;
+                outsideItem = true;
                 break;
         }
     }
@@ -124,25 +147,36 @@ void Item::setIDAndName(int rarity){
                 id = 31;
                 //Player attacks twice per turn
                 name = "Claws";
+                preItem = true;
                 break;
             case 2:
                 id = 32;
                 //Randomly activates an item twice
                 name = "Question Mark";
+                preItem = true;
+                postItem = true;
+                activeItem = true;
+                outsideItem = true;
                 break;
             case 3:
                 id = 33;
-                //Blocks first damage fully
+                //Ten damage
                 name = "Barrier";
+                preItem = true;
                 break;
             case 4:
                 id = 34;
                 //Incerase luck by 10 (Also I should include luck elements maybe)
                 name = "Clover";
+                outsideItem = true;
                 break;
             default:
                 id = 666;
                 name = "What";
+                preItem = true;
+                postItem = true;
+                activeItem = true;
+                outsideItem = true;
                 break;
         }
     }
@@ -153,15 +187,21 @@ void Item::setIDAndName(int rarity){
                 id = 41;
                 //Increase strength by 1 point per island
                 name = "Barbell";
+                outsideItem = true;
                 break;
             case 2:
                 id = 42;
                 //Shoots for 50 damage. Once per turn
                 name = "Gun";
+                preItem = true;
                 break;
             default:
                 id = 666;
                 name = "What";
+                preItem = true;
+                postItem = true;
+                activeItem = true;
+                outsideItem = true;
                 break;
         }
     }
@@ -172,11 +212,38 @@ void Item::setIDAndName(int rarity){
 }
 
 void Item::display() const{
-    std::cout << id << " " << name << std::endl;
+    std::cout << " " << name << std::endl;
 }
 
 void Item::generateItem(){
     setRarity();
     setIDAndName(rarity);
-    display();
 }
+
+int Item::getId(){
+    return id;
+}
+
+std::string Item::getName(){
+    return name;
+}
+
+bool Item::getPreItem(){
+    return preItem;
+}
+
+bool Item::getPostItem(){
+    return postItem;
+}
+
+bool Item::getActiveItem(){
+    return activeItem;
+}
+
+bool Item::getOutsideItem(){
+    return outsideItem;
+}
+
+//void Item::activatePreItems(bool setState){
+//    curActive = setState;
+//}

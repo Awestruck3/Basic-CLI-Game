@@ -1,5 +1,6 @@
 #pragma once
 #include "items.h"
+#include "enemy.h"
 #include <string>
 
     class Player{
@@ -11,9 +12,15 @@
         int curHealth;
         int level;
         int itemCurIndex;
-        bool ailment[5];
-        bool boone[5];
         bool isDefending;
+
+        //These exist as item modifiers
+        int bonusDef;
+        int bonusAttack;
+        int evasion;
+        bool teddy;
+        bool fishingRod;
+        
         Item itemArr[100];
 
         public:
@@ -41,10 +48,28 @@
             bool getIsDefending();
             bool fleeAttempt();
             void gatherLoot(int lootValue);
+            void turnReset();
 
             //Shop methods
             void heal(int hpToHeal);
             void increaseMaxHealth(int healthToIncreaseBy);
             void increaseStrength(int strengthToIncreaseBy);
             bool buy(int choice);
+
+            //Item methods;
+            void attainItem(Item choices[], int selection);
+            void showInventory();
+            //currentPhase is so the game will activate items at appropriate times
+            //0 = pre
+            //1 = post
+            //3 = active
+            //4 = outside
+            //Maybe this will work?
+            void checkItems(Enemy* allEnemies);
+            bool getTeddy();
+            void setTeddy(bool newState);
+            int getBonusDef();
+            int getBonusAttack();
+
+            
     };

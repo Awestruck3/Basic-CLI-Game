@@ -52,23 +52,8 @@ void startGame(){
 
 int selectIsland(int maxIslandNum, Player& mc){
     int userChoice;
-    std::cout << "\033[1;33m" << "Please select which island number you would like to explore. " << std::endl << "Additionally you can input 0 to see your stats: " << "\033[1;0m";
-    std::cin >> userChoice;
-    while(userChoice < 1 || userChoice > maxIslandNum){
-        if(userChoice == 0 || userChoice == 0){
-            mc.display();
-            std::cin.clear();
-            std::cin.ignore(100, '\n');
-            std::cout << "\033[1;33m" << "Select Island: " << "\033[1;0m";
-            std::cin >> userChoice;
-        }
-        else{
-            std::cin.clear();
-            std::cin.ignore(100, '\n');
-            std::cout << "\033[1;31m" << "Invalid choice, please use numbers provided: " << "\033[1;0m";
-            std::cin >> userChoice;
-        }
-    }
+    std::cout << "\033[1;33m" << "Please select which island number you would like to explore. " << std::endl << "Additionally you can input 0 to see your stats or 21 to see your inventory: " << "\033[1;0m";
+    userChoice = selectionFunction(mc, 0, maxIslandNum);
     return userChoice;
 }
 
@@ -134,6 +119,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
                 break;
             }
             playerTurn(newEnemies, mc, numOfEnemies, &escape);
+            
             if(escape == true){
                 break;
             }
@@ -184,17 +170,14 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
 void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     int playerAction;
     bool escapeAttempt = false;
-
-    mc.setIsDefending(false);
+    mc.turnReset();
+    //This should confirm all active items
+    mc.checkItems(enemy);
+    
+    
     std::cout << "\033[1;32m" << "It is your turn. Would you like to:" << "\033[1;0m" << std::endl;
     std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
-    std::cin >> playerAction;
-    while(playerAction <= 0 || playerAction >= 4){
-        std::cin.clear();
-        std::cin.ignore(100, '\n');
-        std::cout << "Invalid choice, please use numbers provided: ";
-    }
-    //This is if the player chooses attack
+    playerAction = selectionFunction(mc, 0, 4);
     if(playerAction == 1){
         playerAttackLogic(numOfEnemies, enemy, mc);
     }
@@ -210,6 +193,7 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
 
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     int playerDefense = mc.getStrength();
+    int playerPassiveDef = mc.getBonusDef();
     //Enemys move in order and go from first to third
     for(int i = 0; i < numOfEnemies; i++){
         //If an enemy is dead they cannot move
@@ -217,11 +201,11 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
             if(enemy[i].actionChoice() > 1){
                 int damageTaken;
                 if(mc.getIsDefending() == true && playerDefense > 0){
-                    damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense);
+                    damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense + playerPassiveDef);
                     playerDefense -= enemy[i].attack();
                 }
                 else{
-                    damageTaken = mc.takeDamage(enemy[i].attack(), 0);
+                    damageTaken = mc.takeDamage(enemy[i].attack(), playerPassiveDef);
                 }
                 if(damageTaken > 0){
                     std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
@@ -249,7 +233,9 @@ void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
                 enemy[i].display();
             }
         }
+
         //Now we select the target
+        //I'm not updating this one to the selectionFunction only because this involves calculating dead enemies as well
         std::cin >> playerAction;
         
         //Currently dead enemies have the same error message as an invalid option
@@ -259,10 +245,10 @@ void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
             std::cout << "Invalid choice, please use numbers provided: ";
             std::cin >> playerAction;
         }
-        std::cout << "\033[1;34m" << enemy[playerAction-1].getName() << " takes " << enemy[playerAction-1].takeDamage(mc.getStrength()) << " damage!" << "\033[1;0m" << std::endl;   
+        std::cout << "\033[1;34m" << enemy[playerAction-1].getName() << " takes " << enemy[playerAction-1].takeDamage(mc.getStrength() + mc.getBonusAttack()) << " damage!" << "\033[1;0m" << std::endl;   
     }
     else{
-        std::cout << "\033[1;34m" << enemy[0].getName() << " takes " << enemy[0].takeDamage(mc.getStrength()) << " damage!" << "\033[1;0m" << std::endl;
+        std::cout << "\033[1;34m" << enemy[0].getName() << " takes " << enemy[0].takeDamage(mc.getStrength() + mc.getBonusAttack()) << " damage!" << "\033[1;0m" << std::endl;
     }
 }
 
@@ -282,24 +268,49 @@ void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
     int userChoice;
     mc.display();
     std::cout << "\033[1;35m" << "A shopkeeper looks at you." << std::endl << "\033[1;31m" << "1. Heal 5 HP (15 money)" << std::endl << "\033[1;32m" << "2. Increase Max HP by 3 (25 money)" << std::endl << "\033[1;36m" << "3. Increase Strenght by 1 (30 money)" << std::endl << "4. Skip" << std::endl << "\033[1;33m" << "\"Choose...\" " << std::endl;
+    userChoice = selectionFunction(mc, 0, 4);
+    while(mc.buy(userChoice) == false){
+    std::cin.clear();
+    std::cin.ignore(100, '\n');
     std::cin >> userChoice;
-    while(userChoice <= 0 || userChoice > 4){
-        std::cin.clear();
-        std::cin.ignore(100, '\n');
-        std::cout << "\033[1;31m" << "Invalid choice, please use numbers 1-3: " << "\033[1;0m";
-        std::cin >> userChoice;
     }
-
-        while(mc.buy(userChoice) == false){
-        std::cin.clear();
-        std::cin.ignore(100, '\n');
-        std::cin >> userChoice;
-        }
 }
 
 void itemInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
     Item choices[3];
+    int userChoice;
+
     for(int i = 0; i < 3; i++){
         choices[i].generateItem();
+        std::cout << i+1;
+        choices[i].display();
     }
+    std::cout << "Select and item to take or use 4 to skip: ";
+    userChoice = selectionFunction(mc, 0, 4);
+    mc.attainItem(choices, userChoice);
+}
+
+//With how often I use this logic for choice making I figured this was easiest
+int selectionFunction(Player mc, int low, int high){
+    int userChoice = 0;
+    std::cin >> userChoice;
+    if(userChoice == 0){
+        mc.display();
+        std::cin.clear();
+        std::cin.ignore(100, '\n');
+        std::cin >> userChoice;
+    }
+    else if(userChoice == 21){
+        mc.showInventory();
+        std::cin.clear();
+        std::cin.ignore(100, '\n');
+        std::cin >> userChoice;
+    }
+    while(userChoice <= low || userChoice > high){
+        std::cin.clear();
+        std::cin.ignore(100, '\n');
+        std::cout << "\033[1;31m" << "Invalid choice, please use numbers " << low+1 << "-" << high << ": " << "\033[1;0m";
+        std::cin >> userChoice;
+    }
+    return userChoice;
 }

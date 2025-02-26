@@ -7,6 +7,7 @@ int generateAmountOfIslands();
 
 void startGame();
 int selectIsland(int maxIslandNum, Player &mc);
+int selectionFunction(Player mc, int low, int high);
 void goToIslandInstance(Islands selectedIslands, Player& mc, bool *gameEnd);
 void combatInstance(Islands selectedIsland, Player& mc, bool *gameEnd, int level = 0, int override = 0);
 void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape);

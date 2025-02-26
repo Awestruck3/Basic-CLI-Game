@@ -10,6 +10,8 @@ class Item{
     bool activeItem;
     bool outsideItem;
 
+    //bool curActive;
+
     public:
         Item();
 
@@ -19,4 +21,11 @@ class Item{
         void setIDAndName(int rarity);
         void display() const;
         void generateItem();
+        int getId();
+        std::string getName();
+        bool getPreItem();
+        bool getPostItem();
+        bool getActiveItem();
+        bool getOutsideItem();
+        //void activatePreItems(bool setState);
 };
