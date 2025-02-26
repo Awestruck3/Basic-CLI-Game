@@ -3,6 +3,28 @@
 #include <stdlib.h>
 #include "dice.h"
 
+/* Colour Cheat Sheet
+Name            FG  BG
+Black           30  40
+Red             31  41
+Green           32  42
+Yellow          33  43
+Blue            34  44
+Magenta         35  45
+Cyan            36  46
+White           37  47
+Bright Black    90  100
+Bright Red      91  101
+Bright Green    92  102
+Bright Yellow   93  103
+Bright Blue     94  104
+Bright Magenta  95  105
+Bright Cyan     96  106
+Bright White    97  107
+*/
+
+
+
 int generateAmountOfIslands(){
     int rc = 0;
     int numOfTries = 0;
@@ -27,17 +49,17 @@ void startGame(){
 
     while(gameEnd == false){
         std::cout << "\033[1;36m" << "gameEnd value is " << gameEnd << "\033[1;0m" << std::endl;
-        int numUpcomingIslands = generateAmountOfIslands();
-        std::cout << numUpcomingIslands << " Island(s) coming up." << std::endl;
-        Islands* upcomingIslands = new Islands[numUpcomingIslands];
         
-        //This for loop sets the attributes of all the islands then displays them for the player to see.
-        //It also assigns numeric value to each island for the player to select
-        for(int i=0; i<numUpcomingIslands; i++){
-            upcomingIslands[i].setIslands();
-            std::cout << "Island #" << i+1 << std::endl;
-            upcomingIslands[i].display();
-            std::cout << std::endl;
+        int numUpcomingIslands = generateAmountOfIslands();
+
+        Islands* upcomingIslands = displayIslands(numUpcomingIslands);
+        mc.turnReset();
+
+        mc.checkItems(NULL, 3);
+        if(mc.getFluteUse() == true){
+            delete [] upcomingIslands;
+            numUpcomingIslands = generateAmountOfIslands();
+            upcomingIslands = displayIslands(numUpcomingIslands);
         }
         //Here we get the int value of the island the player wants to explore
         chosenIsland = selectIsland(numUpcomingIslands, mc);
@@ -45,7 +67,7 @@ void startGame(){
         //I have to subtract one to the chosenIsland because the player is going to select one above the internal number they want
         goToIslandInstance(upcomingIslands[chosenIsland-1], mc, &gameEnd);
 
-        delete [] upcomingIslands;
+        //delete [] upcomingIslands;
     }
     std::cout << "\033[1;36m" << "Game Over! " << gameEnd << "\033[1;0m" << std::endl;
 }
@@ -175,7 +197,6 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     //This should confirm all active items
     mc.checkItems(enemy, 0);
     
-    
     std::cout << "\033[1;32m" << "It is your turn. Would you like to:" << "\033[1;0m" << std::endl;
     std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
     playerAction = selectionFunction(mc, 0, 4);
@@ -195,27 +216,35 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     int playerDefense = mc.getStrength();
     int playerPassiveDef = mc.getBonusDef();
+    
     //Enemys move in order and go from first to third
     for(int i = 0; i < numOfEnemies; i++){
         //If an enemy is dead they cannot move
         if(enemy[i].getIsDead() == false){
             if(enemy[i].actionChoice() > 1){
                 int damageTaken;
-                if(mc.getIsDefending() == true && playerDefense > 0){
-                    damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense, playerPassiveDef);
-                    playerDefense -= enemy[i].attack();
+                int playerEvade = roll10()+1; //I'm rolling the evade per enemy
+                //Hypothetically this will skip the entire attack if the player evades
+                if(playerEvade > mc.getEvasion()){
+                    if(mc.getIsDefending() == true && playerDefense > 0){
+                        damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense, playerPassiveDef);
+                        playerDefense -= enemy[i].attack();
+                    }
+                    else{
+                        damageTaken = mc.takeDamage(enemy[i].attack(), 0, playerPassiveDef);
+                    }
+                    if(damageTaken > 0){
+                        std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
+                    }
+                    else{
+                        std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << 0 << " damage!" << "\033[0m" << std::endl;
+                    }
+                    //std::cout << "\033[1;36m" << mc.getBonusDef() << "\033[1;0m"; //This prints passive damage for debug reasons. Might need in the future
+                    mc.setTeddy(true); //As of right now this will make the teddy a one time use item. Need to make a post-battle function
                 }
                 else{
-                    damageTaken = mc.takeDamage(enemy[i].attack(), 0, playerPassiveDef);
+                    std::cout << "\033[1;32m" << mc.getName() << " evades!" << "\033[1;0m" << std::endl;
                 }
-                if(damageTaken > 0){
-                    std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
-                }
-                else{
-                    std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << 0 << " damage!" << "\033[0m" << std::endl;
-                }
-                //std::cout << "\033[1;36m" << mc.getBonusDef() << "\033[1;0m"; //This prints passive damage for debug reasons. Might need in the future
-                mc.setTeddy(true); //As of right now this will make the teddy a one time use item. Need to make a post-battle function
             }
             //Okay so here defending takes an additional turn to apply. This must be fixed
             else{
@@ -270,7 +299,7 @@ void shopInstance(Islands selectedIsland, Player& mc, bool* gameEnd){
     //As of right now the shop can be used to heal 5 hp, increase max hp by 3, increase strength by 1.
     int userChoice;
     mc.display();
-    std::cout << "\033[1;35m" << "A shopkeeper looks at you." << std::endl << "\033[1;31m" << "1. Heal 5 HP (15 money)" << std::endl << "\033[1;32m" << "2. Increase Max HP by 3 (25 money)" << std::endl << "\033[1;36m" << "3. Increase Strenght by 1 (30 money)" << std::endl << "4. Skip" << std::endl << "\033[1;33m" << "\"Choose...\" " << std::endl;
+    std::cout << "\033[1;35m" << "A shopkeeper looks at you." << std::endl << "\033[1;31m" << "1. Heal 5 HP (15 money)" << std::endl << "\033[1;32m" << "2. Increase Max HP by 3 (25 money)" << std::endl << "\033[1;36m" << "3. Increase Strenght by 1 (30 money)" << std::endl << "4. Skip" << std::endl << "\033[1;33m" << "\"Choose...\" " << "\033[1;0m" << std::endl;
     userChoice = selectionFunction(mc, 0, 4);
     while(mc.buy(userChoice) == false){
     std::cin.clear();
@@ -315,6 +344,7 @@ int selectionFunction(Player mc, int low, int high){
             std::cin.clear();
             std::cin.ignore(100, '\n');
             //std::cin >> userChoice;
+            std::cout << "\033[1;33m" << "Make selection: " << "\033[1;0m";
         }
         else{
             std::cin.clear();
@@ -325,4 +355,20 @@ int selectionFunction(Player mc, int low, int high){
         std::cin >> userChoice;
     }
     return userChoice;
+}
+
+Islands* displayIslands(int numUpcomingIslands){
+
+    std::cout << numUpcomingIslands << " Island(s) coming up." << std::endl;
+    Islands* upcomingIslands = new Islands[numUpcomingIslands];
+    
+    //This for loop sets the attributes of all the islands then displays them for the player to see.
+    //It also assigns numeric value to each island for the player to select
+    for(int i=0; i<numUpcomingIslands; i++){
+        upcomingIslands[i].setIslands();
+        std::cout << "Island #" << i+1 << std::endl;
+        upcomingIslands[i].display();
+        std::cout << std::endl;
+    }
+    return upcomingIslands;
 }

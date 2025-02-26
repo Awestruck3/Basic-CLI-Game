@@ -11,6 +11,7 @@ class Item{
     bool activeItem;
     bool outsideItem;
 
+    int fluteCharge;
     //bool curActive;
 
     public:
@@ -28,4 +29,6 @@ class Item{
         bool getPostItem();
         bool getActiveItem();
         bool getOutsideItem();
+        int getFluteCharge();
+        void setFluteCharge(int decreaseAmount);
 };

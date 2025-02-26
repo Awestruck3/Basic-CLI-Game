@@ -1,4 +1,5 @@
 #include "player.h"
+#include "gameLogic.h"
 #include <iostream>
 #include "dice.h"
 
@@ -14,6 +15,7 @@ Player::Player(int forHealth, int forStrength, int forLuck){
     evasion = 0;
     teddy = false;
     fishingRod = false;
+    fluteUse = false;
     setPlayerStats(forHealth, forStrength, forLuck);
     curHealth = health;
 }
@@ -151,8 +153,10 @@ int Player::getLevel(){
 }
 
 void Player::attainItem(Item choices[], int selection){
-    itemArr[itemCurIndex] = choices[selection-1];
-    itemCurIndex++;
+    if(selection < 4){
+        itemArr[itemCurIndex] = choices[selection-1];
+        itemCurIndex++;
+    }
 }
 
 void Player::showInventory(){
@@ -218,7 +222,7 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
                 bonusAttack += 50;
             }
 
-            std::cout << itemArr[i].getName() << " activates!" << std::endl;
+            activateMessage(itemArr[i]);
         }
 
         //PostItems
@@ -242,6 +246,15 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
         else if(itemArr[i].getOutsideItem() == true && curPhase == 3){
             if(itemArr[i].getId() == 3){
                 bookOfMagic();
+            } //I don't think I need this
+            if(itemArr[i].getId() == 4){
+                if(itemArr[i].getFluteCharge() > 0){
+                    setFluteUse(fluteLogic());
+                    activateMessage(itemArr[i]);
+                }
+                if(fluteUse == true){
+                    itemArr[i].setFluteCharge(1);
+                }
             }
             if(itemArr[i].getId() == 10){
                 if(roll10() < 3){
@@ -262,8 +275,6 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
             if(itemArr[i].getId() == 41){
                 strength += 1;
             }
-
-            std::cout << itemArr[i].getName() << " activates!" << std::endl;
         }
         i++;
     }
@@ -282,6 +293,8 @@ void Player::turnReset(){
     isDefending = false;
     bonusAttack = 0;
     bonusDef = 0;
+    evasion = 0;
+    setFluteUse(false);
 }
 
 int Player::getBonusAttack(){
@@ -303,4 +316,31 @@ void Player::bookOfMagic(){
     else if(selectedStat == 2){
         luck++;
     }
+}
+
+bool Player::fluteLogic(){
+    bool rc = false;
+    int userInput;
+    std::cout << "Would you like to use your flute to reroll the current islands? 1 = Yes, 0 = No: " << std::endl;
+    userInput = selectionFunction(*this, 0, 1);
+    if(userInput == 1){
+        rc = true;
+    }
+    return rc;
+}
+
+void Player::setFluteUse(bool toSet){
+    fluteUse = toSet;
+}
+
+bool Player::getFluteUse(){
+    return fluteUse;
+}
+
+void Player::activateMessage(Item activateItem){
+    std::cout << activateItem.getName() << " activates!" << std::endl;
+}
+
+int Player::getEvasion(){
+    return evasion;
 }

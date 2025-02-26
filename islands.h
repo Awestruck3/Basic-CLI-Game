@@ -46,7 +46,7 @@ class Islands{
             }
         
             ~Islands(){
-                typeOfIsland = 0;
+                typeOfIsland = -1;
                 islandAttribute[0] = 0;
                 islandAttribute[1] = 0;
             }

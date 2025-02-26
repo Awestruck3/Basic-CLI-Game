@@ -11,6 +11,7 @@ Item::Item(){
     postItem = false;
     activeItem = false;
     outsideItem = false;
+    fluteCharge = 0;
     //curActive = false;
 }
 
@@ -48,19 +49,19 @@ void Item::setIDAndName(int rarity){
                 id = 3;
                 //Randomly increases 2 stats by 1 level (this can be the same stat twice)
                 name = "Book of Magic";
-                //This will be an outside item
-                outsideItem = true; //TODO WIP
+                //TODO Test to ensure it only works once. This SHOULD be the case
                 break;
             case 4:
                 id = 4;
                 //Can be used three times to reroll islands
                 name = "Flute";
-                outsideItem = true; //TODO WIP
+                outsideItem = true; //Seemingly works
+                fluteCharge = 3;
                 break;
             case 5:
                 id = 5;
                 //Lower enemy strength by 3
-                name = "Scary Mask"; //TODO: Test
+                name = "Scary Mask"; //Seemingly fine
                 preItem = true;
                 break;
             case 6:
@@ -242,4 +243,12 @@ bool Item::getActiveItem(){
 
 bool Item::getOutsideItem(){
     return outsideItem;
+}
+
+int Item::getFluteCharge(){
+    return fluteCharge;
+}
+
+void Item::setFluteCharge(int decreaseAmount){
+    fluteCharge -= decreaseAmount;
 }

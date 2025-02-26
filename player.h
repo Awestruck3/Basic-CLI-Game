@@ -20,6 +20,7 @@
         int evasion;
         bool teddy;
         bool fishingRod;
+        bool fluteUse;
         
         Item itemArr[100];
 
@@ -59,11 +60,12 @@
             //Item methods;
             void attainItem(Item choices[], int selection);
             void showInventory();
+
             //currentPhase is so the game will activate items at appropriate times
             //0 = pre
             //1 = post
-            //3 = active
-            //4 = outside
+            //2 = active
+            //3 = outside
             //Maybe this will work?
             void checkItems(Enemy* allEnemies, int curPhase);
             bool getTeddy();
@@ -71,6 +73,12 @@
             int getBonusDef() const;
             int getBonusAttack();
             void bookOfMagic();
+            bool fluteLogic();
+            void setFluteUse(bool toSet);
+            bool getFluteUse();
+            int getEvasion();
+
+            void activateMessage(Item ActivateItem);
 
             
     };
