@@ -2,6 +2,7 @@
 #include <iostream>
 #include "dice.h"
 
+
 Enemy::Enemy(int level, int override){
     m_name = "Nothing";
     m_damage = -1;
@@ -11,13 +12,14 @@ Enemy::Enemy(int level, int override){
     isDead = false;
     isCat = false;
     //No level or override to the defaul constructor. This will be changed in future constructors
-    m_name = setEnemyName(level, override);
-    setEnemy(m_name);
+    m_name = setEnemyName(override);
+    setEnemy(m_name, level);
 }
 
 
-void Enemy::setEnemy(std::string enemyName){
+void Enemy::setEnemy(std::string enemyName, int level){
     m_name = enemyName;
+    levelMod = level;
     m_isDefending = false; //I put isDefending up here because I may make certain enemies begin defending depending on how I feel
     moneyToDrop = 0;
     willDrop = roll5050();
@@ -27,28 +29,28 @@ void Enemy::setEnemy(std::string enemyName){
     }
     if(enemyName == "Snake"){
         m_defense = roll4();
-        m_damage = roll10()%5 + 1;
+        m_damage = roll10()%5 + 1 + (levelMod+1/2);
         m_health = 5 + roll4();
     }
     else if(enemyName == "Rat"){
         m_defense = roll4() + 2;
-        m_damage = roll10()%5 + 1;
+        m_damage = roll10()%5 + 1 + (levelMod+1/2);
         m_health = 8 + roll4();
     }
     else if(enemyName == "Glob"){
         m_defense = roll4();
-        m_damage = roll10()%3 + 1;
+        m_damage = roll10()%3 + 1+ (levelMod+1/2);
         m_health = 16 + roll4();
     }
     else if(enemyName == "Tiger"){
         m_defense = roll4();
-        m_damage = roll10()%10 + 4;
+        m_damage = roll10()%10 + 4 + (levelMod+1/2);
         m_health = 8 + roll6();
         isCat = true;
     }
     else if(enemyName == "Lion"){
         m_defense = roll5050()+5;
-        m_damage = roll20() + 3;
+        m_damage = roll20() + 3 + (levelMod+1/2);
         m_health = 50;
         moneyToDrop = 30;
         isCat = true;
@@ -64,7 +66,7 @@ void Enemy::setEnemy(std::string enemyName){
 //This is just setting the enemy name. In the future I will add the level the player is at to generate harder enemies.
 //Additionally override can be used to guarantee certain styles of enemies (bosses/haunted) depending on context
 //These are not currently implimented beyond arguments
-std::string Enemy::setEnemyName(int level, int override){
+std::string Enemy::setEnemyName(int override){
     std::string rc;
     int enemyNum = roll6();
     //Override will be for boos and hardEnemies
@@ -160,4 +162,8 @@ int Enemy::getDropMoney(){
 
 bool Enemy::getIsCat(){
     return isCat;
+}
+
+void Enemy::setLevelMod(int passedLevelMod){
+    levelMod = passedLevelMod;
 }

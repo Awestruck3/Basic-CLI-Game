@@ -10,6 +10,8 @@ class Enemy{
     int m_damage;
     int m_defense;
 
+    int levelMod; //This handles all the changes based on the incoming level value
+
     //The curHealth will keep track of health while the battle commences, this should not be confused with m_health which represents max health
     int curHealth;
     bool isDead;
@@ -25,11 +27,12 @@ class Enemy{
 
         //We're going to create a no argument constructor
         Enemy(int level = 0, int override = 0);
+
         //We're going to create an enemy generator here
-        void setEnemy(std::string enemyName);
+        void setEnemy(std::string enemyName, int level);
 
         //This will give us a name of the enemy which will determine the stats of the enemy going forward 
-        std::string setEnemyName(int level = 0, int override = 0);
+        std::string setEnemyName(int override = 0);
         int getCurHealth();
         std::string getName();
         bool gotKilled();
@@ -43,6 +46,7 @@ class Enemy{
         bool defenseStatus();
         int getDropMoney();
         bool getIsCat();
+        void setLevelMod(int passedLevelMod);
 
         void display();
 

@@ -12,6 +12,7 @@ using namespace std;
 //SEED2 currently guarantees a 2 enemy spawn on first combat
 #define SEED2 123456
 
+
 int main(){
     srand(SEED);
     startGame();

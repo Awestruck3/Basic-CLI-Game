@@ -28,7 +28,7 @@
 
         public:
             //Constructor
-            Player(int forHealth, int forStrength, int forLuck);
+            Player(int forHealth = 0, int forStrength = 0, int forLuck = 0);
             
             //Basic Setters and getters
             void setName();
@@ -43,6 +43,8 @@
             int getCurHealth();
             void display();
             int getLevel();
+            //This function is to increase or decrease the player level as needed
+            void adjustLevel(int amountToAdjustBy);
             
 
             //Combat methods
@@ -84,6 +86,5 @@
             void whistleItemLogic(Enemy* passedEnemy);
 
             void activateMessage(Item ActivateItem);
-
             
     };

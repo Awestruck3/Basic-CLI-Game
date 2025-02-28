@@ -5,6 +5,8 @@
 
 
 Player::Player(int forHealth, int forStrength, int forLuck){
+    bool test = false;
+    
     name = "";
     health = 0;
     strength = 0;
@@ -20,6 +22,10 @@ Player::Player(int forHealth, int forStrength, int forLuck){
     matches = 0;
     setPlayerStats(forHealth, forStrength, forLuck);
     curHealth = health;
+    if(test == true){
+        itemArr[0].itemOverride("Book of Magic", 3, false, false, false, false); 
+        itemCurIndex = 1;
+    }
 }
 
 void Player::setName(){
@@ -87,7 +93,7 @@ int Player::takeDamage(int damageToTake, int playerDefence, int passiveDefence){
 }
 
 void Player::display(){
-    std::cout << name << " Health " << curHealth << "/" << health << " Strength: " << strength << " Money " << money << std::endl; 
+    std::cout << name << std::endl << "\033[1;95m" << "Current Level: " << level << std::endl << "\033[1;91m" << "Health: " << curHealth << "/" << health << std::endl << "\033[1;94m" << "Strength: " << strength << std::endl << "\033[1;93m" << "Money: " << money << std::endl << "\033[1;92m" << "Luck: " << luck << "\033[1;0m" << std::endl; 
 }
 
 bool Player::fleeAttempt(){
@@ -112,6 +118,10 @@ void Player::heal(int hpToHeal){
     if(curHealth > health){
         curHealth = health;
     }
+}
+
+void Player::adjustLevel(int amountToAdjustBy){
+    level += amountToAdjustBy;
 }
 
 void Player::increaseMaxHealth(int healthToIncreaseBy){
@@ -209,7 +219,6 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
                 bonusDef += 10;
             }
             if(itemArr[i].getId() == 24){
-                //Oh Christ, how will I get thorns working?
                 thorns += 3;
             }
             if(itemArr[i].getId() == 31){
@@ -284,6 +293,7 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
             }
             if(itemArr[i].getId() == 41){
                 strength += 1;
+                activateMessage(itemArr[i]);
             }
         }
         i++;
@@ -318,15 +328,17 @@ int Player::getBonusDef() const{
 }
 
 void Player::bookOfMagic(){
-    int selectedStat = roll100()%3;
-    if(selectedStat == 0){
-        health++;
-    }
-    else if(selectedStat == 1){
-        strength++;
-    }
-    else if(selectedStat == 2){
-        luck++;
+    for(int i = 0; i < 2; i++){
+        int selectedStat = roll100()%3;
+        if(selectedStat == 0){
+            health++;
+        }
+        else if(selectedStat == 1){
+            strength++;
+        }
+        else if(selectedStat == 2){
+            luck++;
+        }
     }
 }
 

@@ -31,4 +31,7 @@ class Item{
         bool getOutsideItem();
         int getFluteCharge();
         void setFluteCharge(int decreaseAmount);
+
+        //This override is strictly for testing purposes
+        void itemOverride(std::string testName, int testId, bool testPre, bool testPost, bool testOut, bool testActive);
 };

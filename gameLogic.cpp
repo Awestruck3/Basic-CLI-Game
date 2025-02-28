@@ -45,11 +45,13 @@ int generateAmountOfIslands(){
 void startGame(){
     bool gameEnd = false;
     int chosenIsland;
+    int amountOfIslandTracker = 0; //This tracks how many islands the player has been to in order to adjust difficulty approrpiately
     //I really hate how I made this
     Player mc(roll20(), roll20(), roll10());
     mc.setName();
 
     while(gameEnd == false){
+
         std::cout << "\033[1;36m" << "gameEnd value is " << gameEnd << "\033[1;0m" << std::endl;
         
         int numUpcomingIslands = generateAmountOfIslands();
@@ -69,7 +71,11 @@ void startGame(){
         //I have to subtract one to the chosenIsland because the player is going to select one above the internal number they want
         goToIslandInstance(upcomingIslands[chosenIsland-1], mc, &gameEnd);
 
-        //delete [] upcomingIslands;
+        amountOfIslandTracker++;
+        std::cout << amountOfIslandTracker;
+        if(amountOfIslandTracker % 3 == 0){
+            mc.adjustLevel(1);
+        }
     }
     std::cout << "\033[1;36m" << "Game Over! " << gameEnd << "\033[1;0m" << std::endl;
 }
@@ -129,6 +135,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
 
         for(int i = 0; i < numOfEnemies; i++){
             lootMoney += newEnemies[i].getDropMoney();
+            newEnemies[i].setLevelMod(mc.getLevel());
         }
 
         while(escape == false && mc.getCurHealth() > 0){

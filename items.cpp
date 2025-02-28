@@ -12,7 +12,6 @@ Item::Item(){
     activeItem = false;
     outsideItem = false;
     fluteCharge = 0;
-    //curActive = false;
 }
 
 Item::~Item(){
@@ -84,7 +83,7 @@ void Item::setIDAndName(int rarity){
             case 9:
                 id = 9;
                 //Tigers and lions take +2 every turn
-                name = "Whistle"; //TODO Make sure this doesn't work on enemies paired with tigers
+                name = "Whistle"; //Working
                 postItem = true;
                 break;
             case 10:
@@ -115,13 +114,13 @@ void Item::setIDAndName(int rarity){
             case 2:
                 id = 22;
                 //Heals 3 hp between islands, up to 5 if you have fishing rod
-                name = "Cookbook"; //TODO WIP
+                name = "Cookbook"; //Working
                 outsideItem = true;
                 break;
             case 3:
                 id = 23;
                 //Defend +5 
-                name = "Armour"; //TODO Test
+                name = "Armour"; //TODO Test: I have no reason to think this won't work
                 preItem = true;
                 break;
             case 4:
@@ -186,13 +185,13 @@ void Item::setIDAndName(int rarity){
             case 1:
                 id = 41;
                 //Increase strength by 1 point per island
-                name = "Barbell"; //TODO WIP
+                name = "Barbell"; //Working
                 outsideItem = true;
                 break;
             case 2:
                 id = 42;
                 //Shoots for 50 damage. Once per turn
-                name = "Gun"; //TODO Test
+                name = "Gun"; //Working
                 preItem = true;
                 break;
             default:
@@ -250,4 +249,13 @@ int Item::getFluteCharge(){
 
 void Item::setFluteCharge(int decreaseAmount){
     fluteCharge -= decreaseAmount;
+}
+
+void Item::itemOverride(std::string testName, int testId, bool testPre, bool testPost, bool testOut, bool testActive){
+    name = testName;
+    id = testId;
+    preItem = testPre;
+    postItem = testPost;
+    activeItem = testActive;
+    outsideItem = testOut;
 }
