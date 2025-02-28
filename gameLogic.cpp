@@ -21,6 +21,8 @@ Bright Blue     94  104
 Bright Magenta  95  105
 Bright Cyan     96  106
 Bright White    97  107
+
+"\033[1;0m"
 */
 
 
@@ -56,7 +58,7 @@ void startGame(){
         mc.turnReset();
 
         mc.checkItems(NULL, 3);
-        if(mc.getFluteUse() == true){
+        if(mc.getFluteUse() > 0){
             delete [] upcomingIslands;
             numUpcomingIslands = generateAmountOfIslands();
             upcomingIslands = displayIslands(numUpcomingIslands);
@@ -175,7 +177,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
             if(hardEnemy.getCurHealth() <= 0){
                 break;
             }
-
+            
             enemyTurn(&hardEnemy, mc, 1);
         }
     }
@@ -196,7 +198,6 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     mc.turnReset();
     //This should confirm all active items
     mc.checkItems(enemy, 0);
-    
     std::cout << "\033[1;32m" << "It is your turn. Would you like to:" << "\033[1;0m" << std::endl;
     std::cout << "1. Attack" << std::endl << "2. Defend" << std::endl << "3. Flee" << std::endl;
     playerAction = selectionFunction(mc, 0, 4);
@@ -214,9 +215,14 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
 }
 
 void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
+    mc.checkItems(enemy, 1);
+    
     int playerDefense = mc.getStrength();
     int playerPassiveDef = mc.getBonusDef();
+
     
+    int playerThorns = mc.getThorns();
+
     //Enemys move in order and go from first to third
     for(int i = 0; i < numOfEnemies; i++){
         //If an enemy is dead they cannot move
@@ -239,6 +245,11 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
                     else{
                         std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << 0 << " damage!" << "\033[0m" << std::endl;
                     }
+
+                    if(mc.getThorns() > 0){
+                        std::cout << "\033[1;34m" << enemy[i].getName() << " takes " << enemy[i].takeDamage(mc.getThorns()) << " damage from " << mc.getName() << "'s thorns!" << "\033[1;0m" << std::endl;
+                    }
+                    
                     //std::cout << "\033[1;36m" << mc.getBonusDef() << "\033[1;0m"; //This prints passive damage for debug reasons. Might need in the future
                     mc.setTeddy(true); //As of right now this will make the teddy a one time use item. Need to make a post-battle function
                 }
@@ -246,10 +257,17 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
                     std::cout << "\033[1;32m" << mc.getName() << " evades!" << "\033[1;0m" << std::endl;
                 }
             }
-            //Okay so here defending takes an additional turn to apply. This must be fixed
+
+            //TODO fix defending takes an additional turn to apply.
+            //Wait does this need fixing??
             else{
                 enemy[i].curDefending();
                 std::cout << "\033[1;41m" << enemy[i].getName() << " is defending!" << "\033[0m" << std::endl;
+            }
+
+            //This adds the additional damage from passive damage sources
+            if(mc.getMatches() > 0){
+                std::cout << "\033[1;34m" << enemy[i].getName() << " takes " << enemy[i].takeDamage(mc.getMatches()) << " damage from " << mc.getName() << "'s passive damage!" << "\033[1;0m" << std::endl;
             }
         }
     }

@@ -14,6 +14,7 @@ class Enemy{
     int curHealth;
     bool isDead;
     bool m_isDefending;
+    bool isCat;
 
 
     //These will track loot. As of right now we only have money as a reward 
@@ -41,6 +42,7 @@ class Enemy{
         int getDefense();
         bool defenseStatus();
         int getDropMoney();
+        bool getIsCat();
 
         void display();
 

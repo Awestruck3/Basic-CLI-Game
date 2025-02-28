@@ -13,9 +13,11 @@ Player::Player(int forHealth, int forStrength, int forLuck){
     level = 0;
     itemCurIndex = 0; //This is going to be used for checking all items in inventory and adding new items to the array
     evasion = 0;
+    thorns = 0;
     teddy = false;
     fishingRod = false;
     fluteUse = false;
+    matches = 0;
     setPlayerStats(forHealth, forStrength, forLuck);
     curHealth = health;
 }
@@ -155,6 +157,9 @@ int Player::getLevel(){
 void Player::attainItem(Item choices[], int selection){
     if(selection < 4){
         itemArr[itemCurIndex] = choices[selection-1];
+        if(itemArr[itemCurIndex].getId() == 10){
+            fishingRod = true;
+        }
         itemCurIndex++;
     }
 }
@@ -191,7 +196,7 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
                 bonusDef += 4;
             }
             if(itemArr[i].getId() == 5){
-                bonusAttack += 3; //I know this technically lowers enemy defense but a little bit of flavour text will make it do that 
+                bonusAttack += 3; 
                 bonusDef += 3;
             }
             if(itemArr[i].getId() == 6 && teddy == false){
@@ -200,14 +205,12 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
             if(itemArr[i].getId() == 7){
                 evasion += 3;
             }
-            if(itemArr[i].getId() == 9){
-                //Okay I need to really reconsider this one. It might not end up being a post item because I want it to activate after selecting enemy
-            }
             if(itemArr[i].getId() == 23){
                 bonusDef += 10;
             }
             if(itemArr[i].getId() == 24){
                 //Oh Christ, how will I get thorns working?
+                thorns += 3;
             }
             if(itemArr[i].getId() == 31){
                 //Double attack logic here
@@ -228,10 +231,14 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
         //PostItems
         else if(itemArr[i].getPostItem() == true && curPhase == 1){
             if(itemArr[i].getId() == 8){
-                //I have no idea if this will work lmao
-                allEnemies->takeDamage(3);
+                matches += 1;
             }
-            std::cout << itemArr[i].getName() << " activates!" << std::endl;
+            if(itemArr[i].getId() == 9){
+                //This hurts ALL lions and tigers at the end of the turn
+                //I might end up splitting enemies into certain subtypes that are effected by things like this
+                activateMessage(itemArr[i]);
+                whistleItemLogic(allEnemies);
+            }
         }
 
         //ActiveItems
@@ -249,24 +256,27 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
             } //I don't think I need this
             if(itemArr[i].getId() == 4){
                 if(itemArr[i].getFluteCharge() > 0){
-                    setFluteUse(fluteLogic());
-                    activateMessage(itemArr[i]);
+                    setFluteUse(fluteLogic());                    
                 }
                 if(fluteUse == true){
+                    activateMessage(itemArr[i]);
                     itemArr[i].setFluteCharge(1);
                 }
             }
             if(itemArr[i].getId() == 10){
                 if(roll10() < 3){
                     heal(1);
+                    activateMessage(itemArr[i]);
                 }
             }
             if(itemArr[i].getId() == 22){
                 if(fishingRod == true){
                     heal(5);
+                    activateMessage(itemArr[i]);
                 }
                 else{
                     heal(3);
+                    activateMessage(itemArr[i]);
                 }
             }
             if(itemArr[i].getId() == 34){
@@ -291,9 +301,11 @@ void Player::setTeddy(bool newState){
 
 void Player::turnReset(){
     isDefending = false;
+    matches = 0;
     bonusAttack = 0;
     bonusDef = 0;
     evasion = 0;
+    thorns = 0;
     setFluteUse(false);
 }
 
@@ -321,8 +333,8 @@ void Player::bookOfMagic(){
 bool Player::fluteLogic(){
     bool rc = false;
     int userInput;
-    std::cout << "Would you like to use your flute to reroll the current islands? 1 = Yes, 0 = No: " << std::endl;
-    userInput = selectionFunction(*this, 0, 1);
+    std::cout << "Would you like to use your flute to reroll the current islands? 1 = Yes, 2 = No: " << std::endl;
+    userInput = selectionFunction(*this, 0, 2);
     if(userInput == 1){
         rc = true;
     }
@@ -338,9 +350,24 @@ bool Player::getFluteUse(){
 }
 
 void Player::activateMessage(Item activateItem){
-    std::cout << activateItem.getName() << " activates!" << std::endl;
+    std::cout << "\033[1;34m" << activateItem.getName() << " activates!" << "\033[1;0m" << std::endl;
 }
 
 int Player::getEvasion(){
     return evasion;
+}
+
+int Player::getThorns(){
+    return thorns;
+}
+
+int Player::getMatches(){
+    return matches;
+}
+
+void Player::whistleItemLogic(Enemy* passedEnemy){ 
+    if(passedEnemy->getIsCat() == true){
+        passedEnemy->takeDamage(2); 
+        std::cout << "\033[1;34m" << passedEnemy->getName() << " takes 2 damage from " << name << "'s whistle!" << "\033[1;34m" <<  std::endl;
+    }
 }

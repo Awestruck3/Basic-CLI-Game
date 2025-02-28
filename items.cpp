@@ -36,7 +36,7 @@ void Item::setIDAndName(int rarity){
             case 1:
                 //Strength +2
                 id = 1;
-                name = "Sword"; //TODO Test
+                name = "Sword"; //Working
                 preItem = true;
                 break;
             case 2:
@@ -48,8 +48,7 @@ void Item::setIDAndName(int rarity){
             case 3:
                 id = 3;
                 //Randomly increases 2 stats by 1 level (this can be the same stat twice)
-                name = "Book of Magic";
-                //TODO Test to ensure it only works once. This SHOULD be the case
+                name = "Book of Magic"; //Working
                 break;
             case 4:
                 id = 4;
@@ -73,25 +72,25 @@ void Item::setIDAndName(int rarity){
             case 7:
                 id = 7;
                 //Give chance to enemy to miss attack
-                name = "Pepper spray"; //TODO WIP
+                name = "Pepper spray"; //Working
                 preItem = true;
                 break;
             case 8:
                 id = 8;
                 //Enemies take one damage at the end of every turn
-                name = "Matches"; //TODO WIP
+                name = "Matches"; //Working
                 postItem = true;
                 break;
             case 9:
                 id = 9;
-                //Tigers and lions take +2 every attack
-                name = "Whistle"; //TODO WIP
-                preItem = true;
+                //Tigers and lions take +2 every turn
+                name = "Whistle"; //TODO Make sure this doesn't work on enemies paired with tigers
+                postItem = true;
                 break;
             case 10:
                 id = 10;
                 //Chance to heal 1hp between islands 
-                name = "Fishing Rod"; //TODO WIP
+                name = "Fishing Rod"; //Working
                 outsideItem = true;
                 break;
             default:
@@ -128,7 +127,7 @@ void Item::setIDAndName(int rarity){
             case 4:
                 id = 24;
                 //Thorns, 2 damage to enemy when attacked
-                name = "Fire Potion"; //TODO WIP
+                name = "Fire Potion"; //Working
                 preItem = true;
                 break;
             default:

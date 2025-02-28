@@ -9,6 +9,7 @@ Enemy::Enemy(int level, int override){
     m_defense = -1;
     m_isDefending = false;
     isDead = false;
+    isCat = false;
     //No level or override to the defaul constructor. This will be changed in future constructors
     m_name = setEnemyName(level, override);
     setEnemy(m_name);
@@ -43,12 +44,14 @@ void Enemy::setEnemy(std::string enemyName){
         m_defense = roll4();
         m_damage = roll10()%10 + 4;
         m_health = 8 + roll6();
+        isCat = true;
     }
     else if(enemyName == "Lion"){
         m_defense = roll5050()+5;
         m_damage = roll20() + 3;
         m_health = 50;
         moneyToDrop = 30;
+        isCat = true;
     }
     else{
         m_defense = roll20()+1;
@@ -153,4 +156,8 @@ int Enemy::actionChoice(){
 
 int Enemy::getDropMoney(){
     return moneyToDrop;
+}
+
+bool Enemy::getIsCat(){
+    return isCat;
 }

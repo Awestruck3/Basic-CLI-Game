@@ -18,9 +18,11 @@
         int bonusDef;
         int bonusAttack;
         int evasion;
+        int thorns;
         bool teddy;
         bool fishingRod;
         bool fluteUse;
+        int matches;
         
         Item itemArr[100];
 
@@ -77,6 +79,9 @@
             void setFluteUse(bool toSet);
             bool getFluteUse();
             int getEvasion();
+            int getThorns();
+            int getMatches();
+            void whistleItemLogic(Enemy* passedEnemy);
 
             void activateMessage(Item ActivateItem);
 
