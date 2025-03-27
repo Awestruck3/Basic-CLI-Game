@@ -192,7 +192,7 @@ void Player::showInventory(){
 // 1 = post
 // 2 = active
 // 3 = outside
-void Player::checkItems(Enemy* allEnemies, int curPhase){
+void Player::checkItems(iEnemy* allEnemies, int curPhase){
     int i = 0;
     //We skip this whole function if there's nothing in the inventory
     while(itemArr[i].getId() != 0){
@@ -260,9 +260,6 @@ void Player::checkItems(Enemy* allEnemies, int curPhase){
 
         //OutsideItems
         else if(itemArr[i].getOutsideItem() == true && curPhase == 3){
-            if(itemArr[i].getId() == 3){
-                bookOfMagic();
-            } //I don't think I need this
             if(itemArr[i].getId() == 4){
                 if(itemArr[i].getFluteCharge() > 0){
                     setFluteUse(fluteLogic());                    
@@ -377,7 +374,7 @@ int Player::getMatches(){
     return matches;
 }
 
-void Player::whistleItemLogic(Enemy* passedEnemy){ 
+void Player::whistleItemLogic(iEnemy* passedEnemy){ 
     if(passedEnemy->getIsCat() == true){
         passedEnemy->takeDamage(2); 
         std::cout << "\033[1;34m" << passedEnemy->getName() << " takes 2 damage from " << name << "'s whistle!" << "\033[1;34m" <<  std::endl;

@@ -29,10 +29,7 @@ Bright White    97  107
 
 int generateAmountOfIslands(){
     int rc = 0;
-    int numOfTries = 0;
-    while(numOfTries == 0){
-        numOfTries = roll20();
-    }
+    int numOfTries = roll4()+1;    
     for(int i = 0; i < numOfTries; i++){
         rc += roll5050();
     }
@@ -47,12 +44,12 @@ void startGame(){
     int chosenIsland;
     int amountOfIslandTracker = 0; //This tracks how many islands the player has been to in order to adjust difficulty approrpiately
     //I really hate how I made this
-    Player mc(roll20(), roll20(), roll10());
+    Player mc(roll10() + 10, roll10(), roll10());
     mc.setName();
 
     while(gameEnd == false){
 
-        std::cout << "\033[1;36m" << "gameEnd value is " << gameEnd << "\033[1;0m" << std::endl;
+        //std::cout << "\033[1;36m" << "gameEnd value is " << gameEnd << "\033[1;0m" << std::endl;
         
         int numUpcomingIslands = generateAmountOfIslands();
 
@@ -104,12 +101,14 @@ void goToIslandInstance(Islands selectedIslands, Player& mc, bool* gameEnd){
         if(mc.getLevel() == 0){
             override = 1;
         }
+        else{
+            override = mc.getLevel();
+        }
         //This goes to Hard Enemy instance
         combatInstance(selectedIslands, mc, gameEnd, mc.getLevel(), override);
     }
     else if(selectedIslands.getIslandType() == "Item Room"){
         //This goes to Item Room instance
-        //I guess I need to create items
         itemInstance(selectedIslands, mc, gameEnd);
     }
     else if(selectedIslands.getIslandType() == "Boss"){
@@ -121,6 +120,14 @@ void goToIslandInstance(Islands selectedIslands, Player& mc, bool* gameEnd){
     }
 }
 
+//Need a function for randomly generating new enemy types using iEnemy
+//TODO Write function to return enemy types based on rolled random number
+Snake createSnake(){
+    Snake newSnake(0,0);
+    return newSnake;
+}
+
+
 //This is the combatInstance
 //Curhealth is not staying saved
 void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level, int override){
@@ -130,8 +137,14 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
     mc.setTeddy(false); //It should be fine to always set the teddy to false in every combat because it won't work unless the TB is in the inventory
 
     if(override == 0){
-        int numOfEnemies = roll5050()+1;    
-        Enemy newEnemies[numOfEnemies];
+        int numOfEnemies = roll5050()+1;
+        //Okay how do I create an array before I know what enemy type I'm creating?
+        //Truthfully the way I had it before was easier and probably better but I wanna prove I understand ABC :()
+        iEnemy* newEnemies = new Enemy[numOfEnemies];
+        for(int i = 0; i < numOfEnemies; i++){
+            newEnemies[i] = createSnake();
+        }
+        
 
         for(int i = 0; i < numOfEnemies; i++){
             lootMoney += newEnemies[i].getDropMoney();
@@ -199,7 +212,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
 }
 
 //Due to my own foolishness, in the following function the enemy selected by the player will always be enemy[playerAction-1]
-void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
+void playerTurn(iEnemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     int playerAction;
     bool escapeAttempt = false;
     mc.turnReset();
@@ -221,7 +234,7 @@ void playerTurn(Enemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     }
 }
 
-void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
+void enemyTurn(iEnemy* enemy, Player& mc, int numOfEnemies){
     mc.checkItems(enemy, 1);
     
     int playerDefense = mc.getStrength();
@@ -280,7 +293,7 @@ void enemyTurn(Enemy* enemy, Player& mc, int numOfEnemies){
     }
 }
 
-void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
+void playerAttackLogic(int numOfEnemies, iEnemy* enemy, Player mc){
     int playerAction; 
     if(numOfEnemies > 1){
         std::cout << "\033[1;32m" << "Select target: " << "\033[1;0m" << std::endl;;
@@ -309,7 +322,7 @@ void playerAttackLogic(int numOfEnemies, Enemy* enemy, Player mc){
     }
 }
 
-int checkNumOfDeadEnemies(Enemy* enemy, int numOfEnemies){
+int checkNumOfDeadEnemies(iEnemy* enemy, int numOfEnemies){
     int numOfDeadEnemies = 0;
     for(int i = 0; i < numOfEnemies; i++){
         if(enemy[i].getCurHealth() <= 0){

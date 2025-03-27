@@ -3,8 +3,10 @@
 #include "dice.h"
 
 
+
+
 Enemy::Enemy(int level, int override){
-    m_name = "Nothing";
+    m_name = nullptr;
     m_damage = -1;
     m_health = -1;
     m_defense = -1;
@@ -12,11 +14,10 @@ Enemy::Enemy(int level, int override){
     isDead = false;
     isCat = false;
     //No level or override to the defaul constructor. This will be changed in future constructors
-    m_name = setEnemyName(override);
     setEnemy(m_name, level);
 }
 
-
+//I suspect I'm really gonna need to rework this one
 void Enemy::setEnemy(std::string enemyName, int level){
     m_name = enemyName;
     levelMod = level;
@@ -50,7 +51,7 @@ void Enemy::setEnemy(std::string enemyName, int level){
     }
     else if(enemyName == "Lion"){
         m_defense = roll5050()+5;
-        m_damage = roll20() + 3 + (levelMod+1/2);
+        m_damage = roll10() + 3 + (levelMod+1);
         m_health = 50;
         moneyToDrop = 30;
         isCat = true;
@@ -66,28 +67,30 @@ void Enemy::setEnemy(std::string enemyName, int level){
 //This is just setting the enemy name. In the future I will add the level the player is at to generate harder enemies.
 //Additionally override can be used to guarantee certain styles of enemies (bosses/haunted) depending on context
 //These are not currently implimented beyond arguments
-std::string Enemy::setEnemyName(int override){
-    std::string rc;
-    int enemyNum = roll6();
-    //Override will be for boos and hardEnemies
-    if(override == 1){
-        return rc = "Lion";
-    }
-    else if(enemyNum == 0 || enemyNum == 1){
-        return rc = "Snake";
-    }
-    else if(enemyNum == 2 || enemyNum == 3){
-        return rc = "Rat";
-    }
-    else if(enemyNum == 4){
-        return rc = "Glob";
-    }
-    else if(enemyNum == 5){
-        return rc = "Tiger";
-    }
-    else{
-        return rc = "What";
-    }
+void Enemy::setEnemyName(std::string name){
+//    std::string rc;
+//    int enemyNum = roll6();
+//    Override will be for boos and hardEnemies
+//    if(override >= 1){
+//        return rc = "Lion";
+//    }
+//    For now I'm just making all the hard enemy overrides Lions but I'll add more later
+//    else if(enemyNum == 0 || enemyNum == 1){
+//        return rc = "Snake";
+//    }
+//    else if(enemyNum == 2 || enemyNum == 3){
+//        return rc = "Rat";
+//    }
+//    else if(enemyNum == 4){
+//        return rc = "Glob";
+//    }
+//    else if(enemyNum == 5){
+//        return rc = "Tiger";
+//    }
+//    else{
+//        return rc = "What";
+//    }
+    m_name = name;
 
 }
 

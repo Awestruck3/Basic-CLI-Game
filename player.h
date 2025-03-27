@@ -71,7 +71,7 @@
             //2 = active
             //3 = outside
             //Maybe this will work?
-            void checkItems(Enemy* allEnemies, int curPhase);
+            void checkItems(iEnemy* allEnemies, int curPhase);
             bool getTeddy();
             void setTeddy(bool newState);
             int getBonusDef() const;
@@ -83,7 +83,7 @@
             int getEvasion();
             int getThorns();
             int getMatches();
-            void whistleItemLogic(Enemy* passedEnemy);
+            void whistleItemLogic(iEnemy* passedEnemy);
 
             void activateMessage(Item ActivateItem);
             
