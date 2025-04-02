@@ -71,7 +71,7 @@
             //2 = active
             //3 = outside
             //Maybe this will work?
-            void checkItems(iEnemy* allEnemies, int curPhase);
+            void checkItems(iEnemy* allEnemies[], int curPhase);
             bool getTeddy();
             void setTeddy(bool newState);
             int getBonusDef() const;

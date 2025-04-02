@@ -139,24 +139,39 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
     if(override == 0){
         int numOfEnemies = roll5050()+1;
         //Okay how do I create an array before I know what enemy type I'm creating?
-        //Truthfully the way I had it before was easier and probably better but I wanna prove I understand ABC :()
-        iEnemy* newEnemies = new Enemy[numOfEnemies];
-        for(int i = 0; i < numOfEnemies; i++){
-            newEnemies[i] = createSnake();
-        }
+        //Truthfully the way I had it before was easier and probably better but I wanna prove I understand ABC :(
         
+        iEnemy* newEnemies[numOfEnemies];
+
+        //Fine I'm gonna just do this the hard way...
+        for(int i = 0; i < numOfEnemies; i++){
+            int determineEnemy = roll4();
+            if(determineEnemy == 0){
+                newEnemies[i] = new Snake(mc.getLevel());
+            }
+            if(determineEnemy == 1){
+                newEnemies[i] = new Rat(mc.getLevel());
+            }
+            if(determineEnemy == 2){
+                newEnemies[i] = new Glob(mc.getLevel());
+            }
+            if(determineEnemy == 3){
+                newEnemies[i] = new Tiger(mc.getLevel());
+            }
+        }
+
 
         for(int i = 0; i < numOfEnemies; i++){
-            lootMoney += newEnemies[i].getDropMoney();
-            newEnemies[i].setLevelMod(mc.getLevel());
+            lootMoney += newEnemies[i]->getDropMoney();
+            newEnemies[i]->setLevelMod(mc.getLevel());
         }
 
         while(escape == false && mc.getCurHealth() > 0){
             int numOfDeadEnemies = checkNumOfDeadEnemies(newEnemies, numOfEnemies);
             std::cout <<  "\033[1;32m"; mc.display(); std::cout << "\033[1;0m";
             for(int i = 0; i < numOfEnemies; i++){
-                if(newEnemies[i].getIsDead() == false){
-                   std::cout <<  "\033[1;31m"; newEnemies[i].display(); std::cout << "\033[1;0m";
+                if(newEnemies[i]->getIsDead() == false){
+                   std::cout <<  "\033[1;31m"; newEnemies[i]->display(); std::cout << "\033[1;0m";
                 }
             }
 
@@ -169,7 +184,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
                 break;
             }
             for(int i = 0; i < numOfEnemies; i++){
-                newEnemies[i].noLongerDefending();
+                newEnemies[i]->noLongerDefending();
             }
             //Without this check the game will allow a dead enemy to attack despite being dead
             checkNumOfDeadEnemies(newEnemies, numOfEnemies);
@@ -179,22 +194,26 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
     }
     //This else is the hardEnemy fight conbat logic
     else{
-        Enemy hardEnemy(mc.getLevel(), override);
-        lootMoney = hardEnemy.getDropMoney();
-        while(escape == false && mc.getCurHealth() > 0 && hardEnemy.getIsDead() == false){
+        iEnemy* hardEnemy;
+        if(override = 1){
+             hardEnemy = new Lion(mc.getLevel(), override);
+        }
+        
+        lootMoney = hardEnemy->getDropMoney();
+        while(escape == false && mc.getCurHealth() > 0 && hardEnemy->getIsDead() == false){
             //Because the hard enemy is only one enemy, we have to use slightly custom logic to check if it's dead
-            if(hardEnemy.getCurHealth() <= 0){
+            if(hardEnemy->getCurHealth() <= 0){
                 break;
             }
-            std::cout << "\033[1;31m"; hardEnemy.display(); std::cout << "\033[1;0m";
+            std::cout << "\033[1;31m"; hardEnemy->display(); std::cout << "\033[1;0m";
         
             playerTurn(&hardEnemy, mc, 1, &escape);
             if(escape == true){
                 break;
             }
-            hardEnemy.noLongerDefending();
+            hardEnemy->noLongerDefending();
 
-            if(hardEnemy.getCurHealth() <= 0){
+            if(hardEnemy->getCurHealth() <= 0){
                 break;
             }
             
@@ -212,7 +231,7 @@ void combatInstance(Islands selectedIsland, Player& mc, bool* gameEnd, int level
 }
 
 //Due to my own foolishness, in the following function the enemy selected by the player will always be enemy[playerAction-1]
-void playerTurn(iEnemy* enemy, Player& mc, int numOfEnemies, bool* escape){
+void playerTurn(iEnemy* enemy[], Player& mc, int numOfEnemies, bool* escape){
     int playerAction;
     bool escapeAttempt = false;
     mc.turnReset();
@@ -234,7 +253,7 @@ void playerTurn(iEnemy* enemy, Player& mc, int numOfEnemies, bool* escape){
     }
 }
 
-void enemyTurn(iEnemy* enemy, Player& mc, int numOfEnemies){
+void enemyTurn(iEnemy* enemy[], Player& mc, int numOfEnemies){
     mc.checkItems(enemy, 1);
     
     int playerDefense = mc.getStrength();
@@ -246,28 +265,28 @@ void enemyTurn(iEnemy* enemy, Player& mc, int numOfEnemies){
     //Enemys move in order and go from first to third
     for(int i = 0; i < numOfEnemies; i++){
         //If an enemy is dead they cannot move
-        if(enemy[i].getIsDead() == false){
-            if(enemy[i].actionChoice() > 1){
+        if(enemy[i]->getIsDead() == false){
+            if(enemy[i]->actionChoice() > 1){
                 int damageTaken;
                 int playerEvade = roll10()+1; //I'm rolling the evade per enemy
                 //Hypothetically this will skip the entire attack if the player evades
                 if(playerEvade > mc.getEvasion()){
                     if(mc.getIsDefending() == true && playerDefense > 0){
-                        damageTaken = mc.takeDamage(enemy[i].attack(), playerDefense, playerPassiveDef);
-                        playerDefense -= enemy[i].attack();
+                        damageTaken = mc.takeDamage(enemy[i]->attack(), playerDefense, playerPassiveDef);
+                        playerDefense -= enemy[i]->attack();
                     }
                     else{
-                        damageTaken = mc.takeDamage(enemy[i].attack(), 0, playerPassiveDef);
+                        damageTaken = mc.takeDamage(enemy[i]->attack(), 0, playerPassiveDef);
                     }
                     if(damageTaken > 0){
-                        std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
+                        std::cout << "\033[1;41m" << enemy[i]->getName() << " attacks for " << enemy[i]->attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << damageTaken << " damage!" << "\033[0m" << std::endl;
                     }
                     else{
-                        std::cout << "\033[1;41m" << enemy[i].getName() << " attacks for " << enemy[i].attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << 0 << " damage!" << "\033[0m" << std::endl;
+                        std::cout << "\033[1;41m" << enemy[i]->getName() << " attacks for " << enemy[i]->attack() << " damage!" << "\033[0m" << std::endl << "\033[1;31m" << mc.getName() << " takes " << 0 << " damage!" << "\033[0m" << std::endl;
                     }
 
                     if(mc.getThorns() > 0){
-                        std::cout << "\033[1;34m" << enemy[i].getName() << " takes " << enemy[i].takeDamage(mc.getThorns()) << " damage from " << mc.getName() << "'s thorns!" << "\033[1;0m" << std::endl;
+                        std::cout << "\033[1;34m" << enemy[i]->getName() << " takes " << enemy[i]->takeDamage(mc.getThorns()) << " damage from " << mc.getName() << "'s thorns!" << "\033[1;0m" << std::endl;
                     }
                     
                     //std::cout << "\033[1;36m" << mc.getBonusDef() << "\033[1;0m"; //This prints passive damage for debug reasons. Might need in the future
@@ -281,26 +300,26 @@ void enemyTurn(iEnemy* enemy, Player& mc, int numOfEnemies){
             //TODO fix defending takes an additional turn to apply.
             //Wait does this need fixing??
             else{
-                enemy[i].curDefending();
-                std::cout << "\033[1;41m" << enemy[i].getName() << " is defending!" << "\033[0m" << std::endl;
+                enemy[i]->curDefending();
+                std::cout << "\033[1;41m" << enemy[i]->getName() << " is defending!" << "\033[0m" << std::endl;
             }
 
             //This adds the additional damage from passive damage sources
             if(mc.getMatches() > 0){
-                std::cout << "\033[1;34m" << enemy[i].getName() << " takes " << enemy[i].takeDamage(mc.getMatches()) << " damage from " << mc.getName() << "'s passive damage!" << "\033[1;0m" << std::endl;
+                std::cout << "\033[1;34m" << enemy[i]->getName() << " takes " << enemy[i]->takeDamage(mc.getMatches()) << " damage from " << mc.getName() << "'s passive damage!" << "\033[1;0m" << std::endl;
             }
         }
     }
 }
 
-void playerAttackLogic(int numOfEnemies, iEnemy* enemy, Player mc){
+void playerAttackLogic(int numOfEnemies, iEnemy* enemy[], Player mc){
     int playerAction; 
     if(numOfEnemies > 1){
         std::cout << "\033[1;32m" << "Select target: " << "\033[1;0m" << std::endl;;
         for(int i=0; i<numOfEnemies; i++){
-            if(enemy[i].getIsDead() == false){
+            if(enemy[i]->getIsDead() == false){
                 std::cout << i + 1 << ": "; 
-                enemy[i].display();
+                enemy[i]->display();
             }
         }
 
@@ -309,24 +328,24 @@ void playerAttackLogic(int numOfEnemies, iEnemy* enemy, Player mc){
         std::cin >> playerAction;
         
         //Currently dead enemies have the same error message as an invalid option
-        while(playerAction <= 0 || playerAction > numOfEnemies + 1 || enemy[playerAction-1].getIsDead() == true){
+        while(playerAction <= 0 || playerAction > numOfEnemies + 1 || enemy[playerAction-1]->getIsDead() == true){
             std::cin.clear();
             std::cin.ignore(100, '\n');
             std::cout << "Invalid choice, please use numbers provided: ";
             std::cin >> playerAction;
         }
-        std::cout << "\033[1;34m" << enemy[playerAction-1].getName() << " takes " << enemy[playerAction-1].takeDamage(mc.getStrength() + mc.getBonusAttack()) << " damage!" << "\033[1;0m" << std::endl;   
+        std::cout << "\033[1;34m" << enemy[playerAction-1]->getName() << " takes " << enemy[playerAction-1]->takeDamage(mc.getStrength() + mc.getBonusAttack()) << " damage!" << "\033[1;0m" << std::endl;   
     }
     else{
-        std::cout << "\033[1;34m" << enemy[0].getName() << " takes " << enemy[0].takeDamage(mc.getStrength() + mc.getBonusAttack()) << " damage!" << "\033[1;0m" << std::endl;
+        std::cout << "\033[1;34m" << enemy[0]->getName() << " takes " << enemy[0]->takeDamage(mc.getStrength() + mc.getBonusAttack()) << " damage!" << "\033[1;0m" << std::endl;
     }
 }
 
-int checkNumOfDeadEnemies(iEnemy* enemy, int numOfEnemies){
+int checkNumOfDeadEnemies(iEnemy* enemy[], int numOfEnemies){
     int numOfDeadEnemies = 0;
     for(int i = 0; i < numOfEnemies; i++){
-        if(enemy[i].getCurHealth() <= 0){
-            enemy[i].gotKilled();
+        if(enemy[i]->getCurHealth() <= 0){
+            enemy[i]->gotKilled();
             numOfDeadEnemies++;
         }
     }

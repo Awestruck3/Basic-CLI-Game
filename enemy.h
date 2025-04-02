@@ -98,35 +98,27 @@ class Enemy:public iEnemy{
 
 class Snake:public Enemy{
     public:
-        Snake(int level = 0, int override = 0):Enemy(level, override){  
-            setEnemyName("Snake");
-        }
+        Snake(int level = 0, int override = 0);
+        int attack();
 };
 
 class Rat:public Enemy{
     public:
-        Rat(int level = 0, int override = 0):Enemy(level, override){
-            setEnemyName("Rat");
-        }
+        Rat(int level = 0, int override = 0);
 };
 
 class Glob:public Enemy{
     public:
-        Glob(int level = 0, int override = 0):Enemy(level, override){
-            setEnemyName("Glob");
-        }
+        Glob(int level = 0, int override = 0);
 };
 
 class Tiger:public Enemy{
     public:
-        Tiger(int level = 0, int override = 0):Enemy(level, override){
-            setEnemyName("Tiger");
-        }
+        Tiger(int level = 0, int override = 0);
 };
 
 class Lion:public Enemy{
     public:
-        Lion(int level = 0, int override = 0):Enemy(level, override){
-            setEnemyName("Lion");
-        }
+        Lion(int level = 0, int override = 0);
 };
+

@@ -2,11 +2,8 @@
 #include <iostream>
 #include "dice.h"
 
-
-
-
 Enemy::Enemy(int level, int override){
-    m_name = nullptr;
+    m_name = "nullptr";
     m_damage = -1;
     m_health = -1;
     m_defense = -1;
@@ -29,9 +26,9 @@ void Enemy::setEnemy(std::string enemyName, int level){
         moneyToDrop += roll20();
     }
     if(enemyName == "Snake"){
-        m_defense = roll4();
+        m_defense = roll4() + 1;
         m_damage = roll10()%5 + 1 + (levelMod+1/2);
-        m_health = 5 + roll4();
+        m_health = 8 + roll4();
     }
     else if(enemyName == "Rat"){
         m_defense = roll4() + 2;
@@ -169,4 +166,45 @@ bool Enemy::getIsCat(){
 
 void Enemy::setLevelMod(int passedLevelMod){
     levelMod = passedLevelMod;
+}
+
+
+
+
+//From here we're doing snake logic
+Snake::Snake(int level, int override):Enemy(level, override){  
+    setEnemyName("Snake");
+}
+
+int Snake::attack(){
+    int rc = Enemy::attack();
+    int actionChoice = roll5050();
+    if(actionChoice <= 1){
+        std::cout << "\033[1;41m" << "Snake attacks with a poison lunge!" << std::endl;
+        rc += 2;
+    }
+    return rc;
+}
+
+
+//From here we're doing the Rat logic
+Rat::Rat(int level, int override):Enemy(level, override){
+    setEnemyName("Rat");
+}
+
+
+//From here we're donig the Glob logic
+
+Glob::Glob(int level, int override):Enemy(level, override){
+    setEnemyName("Glob");
+}
+
+//From here we're doing the Tiger logic
+
+Tiger::Tiger(int level, int override):Enemy(level, override){
+    setEnemyName("Tiger");
+}
+//From here we're doing the Lion logic
+Lion::Lion(int level, int override):Enemy(level, override){
+    setEnemyName("Lion");
 }

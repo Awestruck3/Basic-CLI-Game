@@ -192,7 +192,7 @@ void Player::showInventory(){
 // 1 = post
 // 2 = active
 // 3 = outside
-void Player::checkItems(iEnemy* allEnemies, int curPhase){
+void Player::checkItems(iEnemy* allEnemies[], int curPhase){
     int i = 0;
     //We skip this whole function if there's nothing in the inventory
     while(itemArr[i].getId() != 0){
@@ -246,7 +246,9 @@ void Player::checkItems(iEnemy* allEnemies, int curPhase){
                 //This hurts ALL lions and tigers at the end of the turn
                 //I might end up splitting enemies into certain subtypes that are effected by things like this
                 activateMessage(itemArr[i]);
-                whistleItemLogic(allEnemies);
+
+                //TODO rewrite the whistleItemLogic to cycle through each enemy
+                //whistleItemLogic(allEnemies);
             }
         }
 
